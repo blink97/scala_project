@@ -37,9 +37,10 @@ object WebServer {
         } ~
         path("json" / Segment) { id =>
           get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, JsonReader
+            complete(if (id.toInt >= 0 && id.toInt < 5) {HttpEntity(ContentTypes.`text/html(UTF-8)`, JsonReader
               .getJSONbyMapLines(JsonReader
-                .getFileLines("db/" + id + ".json")).collect { case Right(value) => value}.next().toString()))
+                .getFileLines("db/" + id + ".json")).collect { case Right(value) => value}.next().toString())}
+            else { HttpEntity(ContentTypes.`text/html(UTF-8)`, "Error JSON requested don't exist")})
           }
         } ~
         path("hello") {
