@@ -1,3 +1,5 @@
+enablePlugins(ScalaJSPlugin)
+
 name := "scala_project"
 
 version := "0.1"
