@@ -3,8 +3,8 @@ I choose to use a functional oriented library for json parsing
   Argonaut
  */
 
-import argonaut._
-import java.io.File
+import argonaut.Json
+import argonaut.Parse
 import scala.io.Source
 
 
@@ -18,7 +18,17 @@ object JsonReader extends App {
     lines.map(x => Parse.parse(x))
   }
 
+  // val resJson = Json.jEmptyObject-
   val res = getJSONbyMapLines(getFileLines("testJson.json"))
+  val elt1 = res.next() match {
+    case Right(s) => s
+    case Left(e) => e
+  }
+  val elt2 = res.next() match {
+    case Right(s) => s
+    case Left(e) => e
+  }
 
-  println(res.next() match {case Right(s) => s case Left(e) => e})
+  println(elt1)
+  println(elt2)
 }

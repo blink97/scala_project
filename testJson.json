@@ -1,2 +1,2 @@
 {"DataName":"Digits",             "DataType":"Numbers", "Data": [0    , 1, 2, 3, 4, 5, 6, 7, 8, 9] }
-
+{"DataName":"Weapons", "DataType": "List of Objects", "Data" : [ {"Name": "MP5", "Origin": "Germany", "Ammo": "9mm Parabellum"}, {"Name": "FN FiveSeven", "Origin":  "Belgium", "Ammo":  "5.7mm"}, {"Name": "FN P90", "Origin":  "Belgium", "Ammo": "5.7mm"}]}
