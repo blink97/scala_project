@@ -23,40 +23,24 @@ object WebServer {
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
     val route =
-      path("hello") {
+      path("") {
         get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>GET Root</h1>"))
         }
       } ~
-        path("/") {
-          head {
-            complete("Ok")
+        path("json") {
+          get {
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>GET json</h1>"))
           }
         } ~
-        path("json") {
-          head {
-            complete("Ok")
-          }
+        path("json" / Segment) { id =>
           get {
-            complete("Ok")
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "GET JSON ID : " + id))
           }
-          put {
-            complete("Ok")
-          }
-          delete {
-            complete("Ok")
-          } ~
-          path("json" / IntNumber) { id =>
-            get {
-              complete {
-                "Received GET request for order " + id
-              }
-            } ~
-              put {
-                complete {
-                  "Received PUT request for order " + id
-                }
-              }
+        } ~
+        path("hello") {
+          get {
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
           }
         }
 
