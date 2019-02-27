@@ -20,12 +20,25 @@ object WebClient {
 
   def main(args: Array[String]): Unit = {
 
-    requestJson()
+    requestAllJson()
+    requestJson("3")
+    postJson("3")
+    deleteJson("3")
 
   }
 
-  def requestJson(id : String = "") : Unit = {
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(GET, uri = root + "/json/" + id))
+  def requestAllJson(id : String = "") : Unit = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(GET, uri = root + "json" + id))
+
+    responseFuture
+      .onComplete {
+        case Success(res) => println(res)
+        case Failure(_)   => sys.error("something wrong")
+      }
+  }
+
+  def requestJson(id : String) : Unit = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(GET, uri = root + "json/" + id))
 
     responseFuture
       .onComplete {
@@ -35,7 +48,7 @@ object WebClient {
   }
 
   def postJson(id : String) : Unit = {
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "/json/" + id))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "json/" + id))
 
     responseFuture
       .onComplete {
@@ -45,7 +58,7 @@ object WebClient {
   }
 
   def putJson(id : String) : Unit = {
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(PUT, uri = root + "/json/" + id))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(PUT, uri = root + "json/" + id))
 
     responseFuture
       .onComplete {
@@ -55,7 +68,7 @@ object WebClient {
   }
 
   def deleteJson(id : String) : Unit = {
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(DELETE, uri = root + "/json/" + id))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(DELETE, uri = root + "json/" + id))
 
     responseFuture
       .onComplete {
