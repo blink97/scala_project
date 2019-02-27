@@ -30,12 +30,16 @@ object WebServer {
       } ~
         path("json") {
           get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>GET json</h1>"))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, JsonReader
+              .getJSONbyMapLines(JsonReader
+                .getFileLines("testJsonV2.json")).collect { case Right(value) => value}.next().toString()))
           }
         } ~
         path("json" / Segment) { id =>
           get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "GET JSON ID : " + id))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, JsonReader
+              .getJSONbyMapLines(JsonReader
+                .getFileLines("db/" + id + ".json")).collect { case Right(value) => value}.next().toString()))
           }
         } ~
         path("hello") {
