@@ -7,7 +7,8 @@ import akka.stream.ActorMaterializer
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
 
-object WebServer {
+
+object WebServerSave {
   def main(args: Array[String]) {
 
     implicit val system: ActorSystem = ActorSystem("my-system")
@@ -31,3 +32,4 @@ object WebServer {
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
 }
+

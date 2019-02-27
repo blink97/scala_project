@@ -6,14 +6,19 @@ import akka.stream.ActorMaterializer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
-object Client {
+
+
+object WebClient {
+
   def main(args: Array[String]): Unit = {
     implicit val system: ActorSystem = ActorSystem()
     implicit val materializer: ActorMaterializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = "http://akka.io"))
+    val root : String = "http://localhost:8080/"
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = root + "hello"))
 
     responseFuture
       .onComplete {
