@@ -15,7 +15,6 @@ import scala.io.StdIn
 
 object WebServer {
 
-
   def main(args: Array[String]) {
 
     implicit val system: ActorSystem = ActorSystem("my-system")
@@ -28,7 +27,38 @@ object WebServer {
         get {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
         }
-      }
+      } ~
+        path("/") {
+          head {
+            complete("Ok")
+          }
+        } ~
+        path("json") {
+          head {
+            complete("Ok")
+          }
+          get {
+            complete("Ok")
+          }
+          put {
+            complete("Ok")
+          }
+          delete {
+            complete("Ok")
+          } ~
+          path("json" / IntNumber) { id =>
+            get {
+              complete {
+                "Received GET request for order " + id
+              }
+            } ~
+              put {
+                complete {
+                  "Received PUT request for order " + id
+                }
+              }
+          }
+        }
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 
