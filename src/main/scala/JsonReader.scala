@@ -5,8 +5,9 @@ I choose to use a functional oriented library for json parsing
 
 import argonaut.{CodecJson, Json, Parse}
 import argonaut._
-import scalaz._
-import ArgonautScalaz._
+import Argonaut._
+// import scalaz._
+// import ArgonautScalaz._
 
 import scala.io.Source
 import java.io.File
@@ -17,6 +18,7 @@ object JsonReader extends App {
 
   /**
     * getListOfFiles
+    *
     * @param dir - Given Directory
     * @return
     * From a directory given as a File : Give back all files in this dir
@@ -28,6 +30,7 @@ object JsonReader extends App {
 
   /**
     * getJsonFromFiles
+    *
     * @param list - List of files (some may not be .json)
     * @return a List of Iterators of each files : Iterators contains each Json row of the file
     */
@@ -53,8 +56,22 @@ object JsonReader extends App {
     lines.map(x => Parse.parse(x))
   }
 
-  implicit def MsgCodecJson: CodecJson[Msg] =
-    casecodec3(Msg.apply, Msg.unapply)("droneId", "msgId", "msgType", "temp", "geoPos")
+  /* Check MsgClass (WORK IN PROGRESS)
+  def decodeMsg(msg: String): Msg = {
+    Parse.decodeEither[Msg](msg) match {
+      case Right(v) => v
+      case Left(e) => println(e) match {
+        case _ => Msg(-1, -1, "", 0, null)
+      }
+    }
+  }
+
+  def encodeMsg(msg: Msg): String = {
+    Parse.decodeWithEither[String, Json](msg, _, { case Left(msg) => "Error in " + msg
+    case Right(msg) => "Error"
+    })
+  }
+  */
 
   // val resJson = Json.jEmptyObject-
   val res = getJSONbyMapLines(getFileLines("testJson.json"))

@@ -15,9 +15,9 @@ object MsgClass extends App {
   implicit def GeoPosEncodeJson: EncodeJson[GeoPos] = {
     EncodeJson((g: GeoPos) =>
       ("x" := g.x)
-      ->: ("y" := g.y)
-      ->: ("alt" := g.alt)
-      ->: jEmptyObject
+        ->: ("y" := g.y)
+        ->: ("alt" := g.alt)
+        ->: jEmptyObject
     )
   }
 
@@ -30,4 +30,23 @@ object MsgClass extends App {
         ->: ("geoPos" := m.geoPos)
         ->: jEmptyObject)
   }
+
+  implicit def GeoPosDecodeJson: DecodeJson[GeoPos] = {
+    DecodeJson(g => for {
+      x <- (g --\ "x").as[Int]
+      y <- (g --\ "y").as[Int]
+      alt <- (g --\ "alt").as[Int]
+    } yield GeoPos(x, y, alt))
+  }
+
+  implicit def MsgDecodeJson: DecodeJson[Msg] = {
+    DecodeJson(m => for {
+      droneId <- (m --\ "droneId").as[Int]
+      msgId <- (m --\ "msgId").as[Int]
+      msgType <- (m --\ "msgType").as[String]
+      temp <- (m --\ "temp").as[Float]
+      geoPos <- (m --\ "geoPos").as[GeoPos]
+    } yield Msg(droneId, msgId, msgType, temp, geoPos))
+  }
+
 }
