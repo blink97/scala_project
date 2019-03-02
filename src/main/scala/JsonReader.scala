@@ -3,10 +3,15 @@ I choose to use a functional oriented library for json parsing
   Argonaut
  */
 
-import argonaut.Json
-import argonaut.Parse
+import argonaut.{CodecJson, Json, Parse}
+import argonaut._
+import scalaz._
+import ArgonautScalaz._
+
 import scala.io.Source
 import java.io.File
+
+import MsgClass.Msg
 
 object JsonReader extends App {
 
@@ -47,6 +52,9 @@ object JsonReader extends App {
   def getJSONbyMapLines(lines: Iterator[String]): Iterator[Either[String, Json]] = {
     lines.map(x => Parse.parse(x))
   }
+
+  implicit def MsgCodecJson: CodecJson[Msg] =
+    casecodec3(Msg.apply, Msg.unapply)("droneId", "msgId", "msgType", "temp", "geoPos")
 
   // val resJson = Json.jEmptyObject-
   val res = getJSONbyMapLines(getFileLines("testJson.json"))
