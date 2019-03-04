@@ -49,4 +49,14 @@ object MsgClass extends App {
     } yield Msg(droneId, msgId, msgType, temp, geoPos))
   }
 
+  // Test
+  val kJson = Msg(1, 1, "Error", 23.6f, GeoPos(34243, 23224, 232))
+  println(kJson)
+  println(kJson.asJson)
+  val jsonK = kJson.asJson
+  println(jsonK)
+  println(jsonK.as[Msg])
+  val msg = jsonK.as[Msg]
+  println("Test : ", msg.getOr() == kJson)
+
 }
