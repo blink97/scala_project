@@ -1,9 +1,34 @@
-import argonaut._, Argonaut._
+import argonaut._
+import Argonaut._
+
+import scala.util.Random
 
 object MsgClass extends App {
 
+  val randIdMax = 1000000
+  val randIdMsg = 100000000
+  val randTempD = 5
+  val randTempH = 130
+  val randGeo = 100000
+
+  /**
+    * Drone Geographical Position Class/Tuple
+    *
+    * @param x Int X Coord
+    * @param y Int Y Coord
+    * @param alt Int Altitude in meters
+    */
   case class GeoPos(x: Int, y: Int, alt: Int)
 
+  /**
+    * Drone Message Class
+    *
+    * @param droneId Int drone Id
+    * @param msgId Int message id
+    * @param msgType String the message content
+    * @param temp Float Temperature
+    * @param geoPos Object Geographical Position Object
+    */
   case class Msg(
                   droneId: Int,
                   msgId: Int,
@@ -12,6 +37,22 @@ object MsgClass extends App {
                   geoPos: GeoPos
                 )
 
+  /**
+    * Give random message
+    *
+    * @return Msg
+    */
+  def MsgFactory: Msg = {
+    Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
+      "Error", Float(Random.nextInt(randTempH) + randTempD),
+      GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
+  }
+
+  /**
+    * Used in MsgEncodeJson
+    *
+    * @return EncodeJson[GeoPos]
+    */
   implicit def GeoPosEncodeJson: EncodeJson[GeoPos] = {
     EncodeJson((g: GeoPos) =>
       ("x" := g.x)
@@ -21,6 +62,11 @@ object MsgClass extends App {
     )
   }
 
+  /**
+    * Give the message object Msg from Json
+    * Use .asJson
+    * @return EncodeJson[Msg]
+    */
   implicit def MsgEncodeJson: EncodeJson[Msg] = {
     EncodeJson((m: Msg) =>
       ("droneId" := m.droneId)
@@ -31,6 +77,11 @@ object MsgClass extends App {
         ->: jEmptyObject)
   }
 
+  /**
+    * Get GeoPos from json
+    *
+    * @return DecodeJson[GeoPos]
+    */
   implicit def GeoPosDecodeJson: DecodeJson[GeoPos] = {
     DecodeJson(g => for {
       x <- (g --\ "x").as[Int]
@@ -39,6 +90,11 @@ object MsgClass extends App {
     } yield GeoPos(x, y, alt))
   }
 
+  /**
+    * Get Msg from Json
+    * Access with  .getOr()
+    * @return DecodeJson[Msg]
+    */
   implicit def MsgDecodeJson: DecodeJson[Msg] = {
     DecodeJson(m => for {
       droneId <- (m --\ "droneId").as[Int]
