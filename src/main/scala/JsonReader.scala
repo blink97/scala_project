@@ -56,23 +56,6 @@ object JsonReader extends App {
     lines.map(x => Parse.parse(x))
   }
 
-  /* Check MsgClass (WORK IN PROGRESS)
-  def decodeMsg(msg: String): Msg = {
-    Parse.decodeEither[Msg](msg) match {
-      case Right(v) => v
-      case Left(e) => println(e) match {
-        case _ => Msg(-1, -1, "", 0, null)
-      }
-    }
-  }
-
-  def encodeMsg(msg: Msg): String = {
-    Parse.decodeWithEither[String, Json](msg, _, { case Left(msg) => "Error in " + msg
-    case Right(msg) => "Error"
-    })
-  }
-  */
-
   // val resJson = Json.jEmptyObject-
   val res = getJSONbyMapLines(getFileLines("testJson.json"))
   val elt1 = res.next() match {
