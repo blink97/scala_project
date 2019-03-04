@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Visualisation des données</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Données des drones</h2>
+    <p></p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody id="tableau">
+        </tbody>
+    </table>
+</div>
+<!-- On inclut le code Scala.js compilé -->
+<!--script type="text/javascript" src="./target/scala-2.12/scala_project-fastopt.js"></script-->
+<!-- On appelle la fonction générée en JavaScript -->
+<script type="text/javascript">
+    var tab =
+    {
+        "tab": [
+            {
+                "firstname": "John",
+                "lastname": "Doe",
+                "email": "john@exemple.com"
+            },
+            {
+                "firstname": "Mary",
+                "lastname": "Moe",
+                "email": "mary@exemple.com"
+            },
+            {
+                "firstname": "July",
+                "lastname": "Dooley",
+                "email": "july@exemple.com"
+            },
+            {
+                "firstname": "Etienne",
+                "lastname": "Gandilhon",
+                "email": "etienne@exemple.com"
+            }
+        ]
+    }
+    console.log(tab)
+    for (var i = 0; i < tab.tab.length; i++) {
+        var array = tab.tab[i];
+        var tr = document.createElement("tr");
+        var tdFirstname = document.createElement("td");
+        var tdLastname = document.createElement("td");
+        var tdEmail = document.createElement("td");
+
+        tdFirstname.appendChild(document.createTextNode(array.firstname));
+        tdLastname.appendChild(document.createTextNode(array.lastname));
+        tdEmail.appendChild(document.createTextNode(array.email));
+
+        tr.appendChild(tdFirstname);
+        tr.appendChild(tdLastname);
+        tr.appendChild(tdEmail);
+        var tableau = document.getElementById("tableau");
+        tableau.appendChild(tr);
+    }
+</script>
+</body>
+</html>
+<!--for (var i = 0; i < 4; i++) {
+        var tr = document.createElement("tr");
+        for (var j = 0; j < 3; j++) {
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode(tab[i][j]));
+            console.log(tab[i][j]);
+            tr.appendChild(td);
+        }
+        var tableau = document.getElementById("tableau");
+        tableau.appendChild(tr);
+}-->
