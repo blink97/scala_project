@@ -27,7 +27,7 @@ object WebServer {
           get {
             complete(HttpEntity(ContentTypes.`application/json`, JsonReader
               .getJSONbyMapLines(JsonReader.getFileLines("testJsonV2.json"))
-              .collect { case Right(value) => value }.next().toString())))
+              .collect { case Right(value) => value }.next().toString()))
           }
         } ~
         path("json" / Segment) { id =>
