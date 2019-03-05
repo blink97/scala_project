@@ -47,7 +47,7 @@ object MsgClass extends App {
     */
   def MsgFactory: Msg = {
     Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
-      "Error", Float(Random.nextInt(randTempH) + randTempD), Instant.now.getEpochSecond,
+      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Instant.now.getEpochSecond,
       GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
   }
 
