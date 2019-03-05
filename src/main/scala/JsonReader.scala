@@ -4,26 +4,19 @@ I choose to use a functional oriented library for json parsing
  */
 
 import argonaut.{CodecJson, Json, Parse}
-import argonaut._
-import Argonaut._
-// import scalaz._
-// import ArgonautScalaz._
-
 import scala.io.Source
 import java.io.File
-
-import MsgClass.Msg
 
 object JsonReader extends App {
 
   /**
-    * getListOfFiles
+    * getDirFiles
     *
     * @param dir - Given Directory
     * @return
     * From a directory given as a File : Give back all files in this dir
     */
-  def getListOfFiles(dir: File): List[File] = dir match {
+  def getDirFiles(dir: File): List[File] = dir match {
     case d if d.exists && d.isDirectory => d.listFiles.filter(_.isFile).toList
     case _ => List[File]()
   }
@@ -40,7 +33,7 @@ object JsonReader extends App {
 
   /**
     *
-    * @param path
+    * @param path Path to a file
     * @return
     */
   def getFileLines(path: String): Iterator[String] = {
@@ -48,32 +41,12 @@ object JsonReader extends App {
   }
 
   /**
-    *
-    * @param lines
-    * @return
+    * Parse each line as Json
+    * @param lines An Iterator of Strings = lines of a file
+    * @return Iterator over Either[String=Error, Json], get it with Right
     */
   def getJSONbyMapLines(lines: Iterator[String]): Iterator[Either[String, Json]] = {
     lines.map(x => Parse.parse(x))
   }
 
-  // val resJson = Json.jEmptyObject-
-  val res = getJSONbyMapLines(getFileLines("testJson.json"))
-  val elt1 = res.next() match {
-    case Right(s) => s
-    case Left(e) => e
-  }
-  val elt2 = res.next() match {
-    case Right(s) => s
-    case Left(e) => e
-  }
-
-  println("Individual Json Output")
-  println(elt1)
-  println(elt2)
-
-  // Quick Test dir Jsons
-  // List of Either
-  val resDir = getJsonFromFiles(getListOfFiles(new File("./")))
-  println("(Folder) All Json Files Every Row Output")
-  resDir.foreach(x => x.foreach { case Right(s) => println(s) case Left(e) => println(e) })
 }
