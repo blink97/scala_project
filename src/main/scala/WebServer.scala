@@ -6,11 +6,14 @@ import akka.stream.ActorMaterializer
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
-
+import java.io.File
 
 object WebServer {
 
   def main(args: Array[String]) {
+
+    val idMin = 0
+    val idMax = 1000
 
     implicit val system: ActorSystem = ActorSystem("my-system")
     implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -30,21 +33,52 @@ object WebServer {
               .collect { case Right(value) => value }.next().toString()))
           }
         } ~
-        path("json" / Segment) { id =>
-          get {
-            complete(if (id.toInt >= 0 && id.toInt < 5) {
-              HttpEntity(ContentTypes.`application/json`, JsonReader
-                .getJSONbyMapLines(JsonReader
-                  .getFileLines("db/" + id + ".json")).collect { case Right(value) => value }.next().toString())
+        path("json/delete" / Segment) { id =>
+          delete {
+            /* val fileTemp = new File("db/" + id + ".json")
+            if (fileTemp.exists) {
+              fileTemp.delete()
+            } */
+            /*
+            complete(if (id.toInt => idMin && id.toInt < idMax
+            )
+            {
+              HttpEntity(ContentType.`text/html(UTF-8)`,
+                "File deleted")
             }
-            else {
-              HttpEntity(ContentTypes.`text/html(UTF-8)`, "Error JSON requested don't exist")
+            else
+            {
+              HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                "Error JSON requested delete don't exist")
             })
+            */
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+              "Error JSON " + id + "  requested delete don't exist"))
           }
         } ~
-        path("hello") {
+        path("json/patch" / Segment) { id =>
+          patch {
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+              "Error JSON " + id + "  requested to delete don't exist"))
+          }
+        } ~
+        path("json/post" / Segment) { id =>
+          post {
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+              "Error JSON " + id + "  requested to delete don't exist"))
+          }
+        } ~
+        path("json" / Segment) { id =>
           get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+            complete(if (id.toInt >= idMin && id.toInt < 5) {
+              HttpEntity(ContentTypes.`application/json`, JsonReader
+                .getJSONbyMapLines(JsonReader.getFileLines("db/" + id + ".json"))
+                .collect { case Right(value) => value }.next().toString())
+            }
+            else {
+              HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                "Error JSON requested don't exist")
+            })
           }
         }
 
@@ -56,6 +90,5 @@ object WebServer {
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
   }
-
 
 }
