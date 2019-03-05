@@ -8,6 +8,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import argonaut.Json
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
@@ -30,17 +31,21 @@ object WebServer {
       } ~
         path("json") {
           get {
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, JsonReader
-              .getJSONbyMapLines(JsonReader
-                .getFileLines("testJsonV2.json")).collect { case Right(value) => value}.next().toString()))
+            complete(HttpEntity(ContentTypes.`application/json`, JsonReader
+              .getJSONbyMapLines(JsonReader.getFileLines("testJsonV2.json"))
+              .collect { case Right(value) => value }.next().toString())))
           }
         } ~
         path("json" / Segment) { id =>
           get {
-            complete(if (id.toInt >= 0 && id.toInt < 5) {HttpEntity(ContentTypes.`text/html(UTF-8)`, JsonReader
-              .getJSONbyMapLines(JsonReader
-                .getFileLines("db/" + id + ".json")).collect { case Right(value) => value}.next().toString())}
-            else { HttpEntity(ContentTypes.`text/html(UTF-8)`, "Error JSON requested don't exist")})
+            complete(if (id.toInt >= 0 && id.toInt < 5) {
+              HttpEntity(ContentTypes.`application/json`, JsonReader
+                .getJSONbyMapLines(JsonReader
+                  .getFileLines("db/" + id + ".json")).collect { case Right(value) => value }.next().toString())
+            }
+            else {
+              HttpEntity(ContentTypes.`text/html(UTF-8)`, "Error JSON requested don't exist")
+            })
           }
         } ~
         path("hello") {
