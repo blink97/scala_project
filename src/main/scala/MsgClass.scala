@@ -2,6 +2,7 @@ import argonaut._
 import Argonaut._
 
 import scala.util.Random
+import java.time.Instant
 
 object MsgClass extends App {
 
@@ -27,6 +28,7 @@ object MsgClass extends App {
     * @param msgId Int message id
     * @param msgType String the message content
     * @param temp Float Temperature
+    * @param time Long TimeStamp
     * @param geoPos Object Geographical Position Object
     */
   case class Msg(
@@ -34,6 +36,7 @@ object MsgClass extends App {
                   msgId: Int,
                   msgType: String,
                   temp: Float,
+                  time: Long,
                   geoPos: GeoPos
                 )
 
@@ -44,7 +47,7 @@ object MsgClass extends App {
     */
   def MsgFactory: Msg = {
     Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
-      "Error", Float(Random.nextInt(randTempH) + randTempD),
+      "Error", Float(Random.nextInt(randTempH) + randTempD), Instant.now.getEpochSecond,
       GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
   }
 
@@ -73,6 +76,7 @@ object MsgClass extends App {
         ->: ("msgId" := m.msgId)
         ->: ("msgType" := m.msgType)
         ->: ("temp" := m.temp)
+        ->: ("time" := m.time)
         ->: ("geoPos" := m.geoPos)
         ->: jEmptyObject)
   }
@@ -101,12 +105,13 @@ object MsgClass extends App {
       msgId <- (m --\ "msgId").as[Int]
       msgType <- (m --\ "msgType").as[String]
       temp <- (m --\ "temp").as[Float]
+      time <- (m --\ "time").as[Long]
       geoPos <- (m --\ "geoPos").as[GeoPos]
-    } yield Msg(droneId, msgId, msgType, temp, geoPos))
+    } yield Msg(droneId, msgId, msgType, temp, time, geoPos))
   }
 
   // Test
-  val kJson = Msg(1, 1, "Error", 23.6f, GeoPos(34243, 23224, 232))
+  val kJson = Msg(1, 1, "Error", 23.6f, 6464654654654L, GeoPos(34243, 23224, 232))
   println(kJson)
   println(kJson.asJson)
   val jsonK = kJson.asJson
