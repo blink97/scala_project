@@ -1,15 +1,18 @@
+import java.io
 import java.io.File
+
 import JsonReader.{getFileLines, getJSONbyMapLines, getJsonFromFiles, getListOfFiles}
+import argonaut.Json
 import org.scalatest.FunSuite
 
 object JsonReaderTest extends FunSuite {
   // val resJson = Json.jEmptyObject-
-  val res = getJSONbyMapLines(getFileLines("testJson.json"))
-  val elt1 = res.next() match {
+  val res: Iterator[Either[String, Json]] = getJSONbyMapLines(getFileLines("testJson.json"))
+  val elt1: io.Serializable = res.next() match {
     case Right(s) => s
     case Left(e) => e
   }
-  val elt2 = res.next() match {
+  val elt2: io.Serializable = res.next() match {
     case Right(s) => s
     case Left(e) => e
   }
@@ -24,7 +27,7 @@ object JsonReaderTest extends FunSuite {
 
   // Quick Test dir Jsons
   // List of Either
-  val resDir = getJsonFromFiles(getListOfFiles(new File("./")))
+  val resDir: List[Iterator[Either[String, Json]]] = getJsonFromFiles(getListOfFiles(new File("./")))
   println("(Folder) All Json Files Every Row Output")
   resDir.foreach(x => x.foreach { case Right(s) => println(s) case Left(e) => println(e) && assert(e != "") })
 }
