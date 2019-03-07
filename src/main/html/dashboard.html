@@ -27,9 +27,16 @@
     </table>
 </div>
 <!-- On inclut le code Scala.js compilé -->
-<!--script type="text/javascript" src="./target/scala-2.12/scala_project-fastopt.js"></script-->
+<!--script type="text/javascript" src="../../../target/scala-2.12/scala_project-fastopt.js"></script-->
 <!-- On appelle la fonction générée en JavaScript -->
 <script type="text/javascript">
+    function processRequest(e) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            console.log(xhr)
+        }
+    }
+
+
     var tab =
     {
         "tab": [
@@ -55,7 +62,12 @@
             }
         ]
     }
-    console.log(tab)
+    var xhr = new XMLHttpRequest();
+    xhr.open( "GET", "http://localhost:8080/json");
+    xhr.send();
+
+    xhr.onreadystatechange = processRequest;
+
     for (var i = 0; i < tab.tab.length; i++) {
         var array = tab.tab[i];
         var tr = document.createElement("tr");
