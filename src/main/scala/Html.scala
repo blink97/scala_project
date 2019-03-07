@@ -13,8 +13,7 @@ object Html extends JSApp {
     array.appendChild(cell)*/
   }*/
   def main(): Unit = {
-    val json = JsonReader.getJSONbyMapLines(JsonReader.getFileLines("testJsonV2.json"))
-      .collect { case Right(value) => value }.next().toString()
+    val json = WebClient.requestGet()
     println(json)
   }
 }
