@@ -81,6 +81,7 @@ object WebServer {
         get {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>GET Root</h1>"))
         }
+        //getFromResource("resources/dashboard.html")
       } ~
         path("json") {
           get {
