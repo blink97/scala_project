@@ -4,9 +4,15 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.io.StdIn
 import java.io.File
+import java.nio.file.Paths
+
+import akka.http.scaladsl.server.Route
+import akka.stream.scaladsl.FileIO
+
+import scala.util.{Failure, Success}
 
 object WebServer {
 
@@ -19,6 +25,56 @@ object WebServer {
     implicit val materializer: ActorMaterializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+
+
+    /* Warning Need Tests as Lazy */
+    lazy val routeDL: Route =
+      pathPrefix("json") {
+        concat(
+          pathEnd {
+            concat(
+              get {
+                complete(HttpEntity(ContentTypes.`application/json`, JsonReader
+                  .getJSONbyMapLines(JsonReader.getFileLines("testJsonV2.json"))
+                  .collect { case Right(value) => value }.next().toString()))
+              },
+              post {
+                fileUpload("JsonUpload") {
+                  case (fileInfo, fileStream) =>
+                    val sink = FileIO.toPath(Paths.get("db/") resolve fileInfo.fileName)
+                    val writeResult = fileStream.runWith(sink)
+                    onSuccess(writeResult) { result =>
+                      result.status match {
+                        case Success(_) => complete(s"Successfully written ${result.count} bytes")
+                        case Failure(e) => throw e
+                      }
+                    }
+                }
+              }
+            )
+          },
+          path(Segment) { id =>
+            concat(
+              get {
+                complete(if (id.toInt >= idMin && id.toInt < 5) {
+                  HttpEntity(ContentTypes.`application/json`, JsonReader
+                    .getJSONbyMapLines(JsonReader.getFileLines("db/" + id + ".json"))
+                    .collect { case Right(value) => value }.next().toString())
+                } else {
+                  HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                    "Error JSON requested don't exist")
+                })
+              },
+              delete {
+                val X = "REmove json or line in json"
+                complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                  "WORK"))
+              }
+            )
+          }
+        )
+      }
+
 
     val route =
       path("") {
@@ -62,10 +118,35 @@ object WebServer {
               "Error JSON " + id + "  requested to delete don't exist"))
           }
         } ~
+        path("json/upload") {
+          post {
+            fileUpload("JsonUpload") {
+              case (fileInfo, fileStream) =>
+                val sink = FileIO.toPath(Paths.get("db/") resolve fileInfo.fileName)
+                val writeResult = fileStream.runWith(sink)
+                onSuccess(writeResult) { result =>
+                  result.status match {
+                    case Success(_) => complete(s"Successfully written ${result.count} bytes")
+                    case Failure(e) => throw e
+                  }
+                }
+            }
+          }
+        } ~
         path("json/post" / Segment) { id =>
           post {
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
-              "Error JSON " + id + "  requested to delete don't exist"))
+              "Error JSON requested don't exist"))
+            /*
+            val upload: Future[Boolean] = true
+
+            upload onComplete {
+              case Success(_) => val resS = "JSON " + id + " has been posted"
+              case Failure(_) => val resS = "Error Json"
+            }
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+              resS))
+              */
           }
         } ~
         path("json" / Segment) { id =>
@@ -82,7 +163,7 @@ object WebServer {
           }
         }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(routeDL, "localhost", 8080)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
