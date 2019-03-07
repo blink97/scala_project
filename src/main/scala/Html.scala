@@ -13,7 +13,7 @@ object Html extends JSApp {
     array.appendChild(cell)*/
   }*/
   def main(): Unit = {
-    val json = WebClient.requestGet()
-    println(json)
+    //val json = WebClient.requestGet()
+    println("test")
   }
 }
