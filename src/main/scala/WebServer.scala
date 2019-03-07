@@ -3,6 +3,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import akka.http.scaladsl.model.StatusCodes
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.io.StdIn
@@ -129,12 +130,26 @@ object WebServer {
       }
 
 
+    lazy val routeStaticRes =
+      get {
+        (pathEndOrSingleSlash & redirectToTrailingSlashIfMissing(StatusCodes.TemporaryRedirect)) {
+          println("RES")
+
+          getFromFile("src/main/resources/web/dashboard.html")
+        } ~ {
+          println("RES")
+
+          getFromDirectory("src/main/resources/web")
+        }
+      }
+
     val route =
       path("") {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>GET Root</h1>"))
-        }
-        //getFromResource("resources/dashboard.html")
+        //get {
+        //  complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>GET Root</h1>"))
+        //}
+        println("RES")
+        getFromResource("src/main/resources/web/dashboard.html")
       } ~
         path("json") {
           get {
@@ -217,7 +232,7 @@ object WebServer {
           }
         }
 
-    val bindingFuture = Http().bindAndHandle(routeDL, "localhost", 8080)
+    val bindingFuture = Http().bindAndHandle(routeStaticRes, "localhost", 8080)
 
     println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
     StdIn.readLine() // let it run until user presses return
