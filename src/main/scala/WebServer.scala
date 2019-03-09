@@ -14,6 +14,7 @@ object WebServer {
 
   def main(args: Array[String]) {
 
+    val conn = PostgresFunctions.initServer()
     val idMin = 0
     val idMax = 1000
 
@@ -42,7 +43,7 @@ object WebServer {
             concat(
               get {
                 /* All msg as JSON */
-                complete(HttpEntity(ContentTypes.`application/json`, ""))
+                complete(HttpEntity(ContentTypes.`application/json`, PostgresFunctions.getDBMsg(conn)))
               },
               post {
                 entity(as[String]) { s =>

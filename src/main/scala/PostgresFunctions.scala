@@ -15,6 +15,39 @@ object PostgresFunctions extends App {
     prepare_statement_add_column.close()
   }
 
+  def getDBMsg(conn: Connection) = {
+    val statement = conn.createStatement()
+    val resultSet = statement.executeQuery(s"SELECT * FROM msg")
+    var k = ""
+    while (resultSet.next()) {
+      val id = resultSet.getString("id")
+      val msg_id = resultSet.getString("msg_id")
+      val drone_id = resultSet.getString("drone_id")
+      val temp = resultSet.getString("temp")
+      val time = resultSet.getString("time")
+      val msg = resultSet.getString("msg_type")
+      k += id + " " + msg_id + " " + drone_id + " " + temp + " " + time + " " + msg + "\n"
+    }
+    k
+  }
+
+  def getDBGeoPos(conn: Connection) = {
+    val statement = conn.createStatement()
+    val resultSet = statement.executeQuery(s"SELECT * FROM geopos")
+    /* TODO NO VAR !!! */
+    var k = ""
+    while (resultSet.next()) {
+      val id = resultSet.getString("id")
+      val msg_id = resultSet.getString("msg_id")
+      val x = resultSet.getString("x")
+      val y = resultSet.getString("y")
+      val alt = resultSet.getString("alt")
+      val time = resultSet.getString("time")
+      k += id + "  " + msg_id + " " + x + " " + y + " " + alt + " " + time + "\n"
+    }
+    k
+  }
+
   def lookDBMsg(conn: Connection): Unit = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
