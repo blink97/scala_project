@@ -1,16 +1,34 @@
 
 
-psql postgres -c "CREATE DATABASE test42"
+psql postgres -c "CREATE DATABASE test21"
 psql postgres -c "CREATE USER scala WITH ENCRYPTED PASSWORD '42scala'"
-psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE test42 TO scala"
+psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE test21 TO scala"
 
-# psql postgres -c "\c test42"
+# psql postgres -c "\c test21"
 # psql postgres -c "CREATE TABLE MSG(ID INT PRIMARY KEY NOT NULL, DRONE_ID INT NOT NULL, MSG_TYPE CHAR(64) NOT NULL);"
 set -e # Stop script on error
 
-PGPASSWORD=42scala psql -h localhost -U scala test42 <<EOF
+PGPASSWORD=42scala psql -h localhost -U scala test21 <<EOF
 
-DROP TABLE IF EXISTS lol;
-CREATE TABLE lol (ID SERIAL);
+DROP TABLE IF EXISTS msg;
+CREATE TABLE msg (
+ID SERIAL PRIMARY KEY NOT NULL,
+MSG_ID INT NOT NULL,
+DRONE_ID INT NOT NULL,
+MSG_TYPE CHAR(64) NOT NULL,
+TEMP REAL NOT NULL,
+TIME INT NOT NULL
+);
+
+DROP TABLE IF EXISTS geopos;
+CREATE TABLE geopos (
+ID SERIAL PRIMARY  KEY NOT NULL,
+MSG_ID INT NOT NULL,
+X INT NOT NULL,
+Y INT NOT NULL,
+ALT INT NOT NULL,
+TIME INT NOT NULL
+);
+
 EOF
 
