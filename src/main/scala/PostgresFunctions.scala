@@ -5,7 +5,7 @@ object PostgresFunctions extends App {
     // DriverManager.register(new Nothing)
     classOf[org.postgresql.Driver]
     // Make the connection
-    DriverManager.getConnection("jdbc:postgresql://localhost:5432/test21", "scala", "42scala")
+    DriverManager.getConnection("jdbc:postgresql://localhost:5432/scala-project", "scala", "42scala")
   }
 
   def insertDB(conn: Connection, table: String, col: List[String], values: List[String]): Unit = {
