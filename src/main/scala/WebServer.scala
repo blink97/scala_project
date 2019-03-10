@@ -62,6 +62,24 @@ object WebServer {
                 }
               )
             },
+            /* Remove all msg from this drone id */
+            path("removedronemsg" / Segment) { id =>
+              concat(
+                get {
+                  /* TODO patch a row of the database */
+                  PostgresFunctions.deleteDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
+                  complete(
+                    HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                      "Done!")
+                  )
+                },
+                delete {
+                  PostgresFunctions.deleteDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
+                  complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                    "Done!"))
+                }
+              )
+            } ~
             /* Give all messages from this drone id */
             path("drone" / Segment) { id =>
               /* curl -i -X GET "http://localhost:8080/msg/drone/1"   == Donne tout les msg du drone 1*/
@@ -75,25 +93,7 @@ object WebServer {
                       rs.getString("msg_type") + "\n").mkString(""))
                 )
               }
-            } ~
-              /* Remove all msg from this drone id */
-              path("drone/remove" / Segment) { id =>
-                concat(
-                  get {
-                    /* TODO patch a row of the database */
-                    PostgresFunctions.anyDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
-                    complete(
-                      HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                        "Done!")
-                    )
-                  },
-                  delete {
-                    PostgresFunctions.anyDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
-                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                      "Done!"))
-                  }
-                )
-              }
+            }
           )
         }
 

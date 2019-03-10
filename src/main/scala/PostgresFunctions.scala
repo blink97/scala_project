@@ -60,8 +60,14 @@ object PostgresFunctions extends App {
     prepare_statement_add_column.close()
   }
 
+  def deleteDBQuery(conn: Connection, query:String) = {
+    val statement = conn.createStatement()
+    statement.executeQuery(query)
+  }
+
   def anyDBQuery(conn: Connection, query: String): Stream[ResultSet] = {
     val statement = conn.createStatement()
+    // println(query)
     val resultSet = statement.executeQuery(query)
     resultSet.toStream
   }
