@@ -1,11 +1,56 @@
 import java.sql._
 
+import MsgClass.{GeoPos, Msg}
+import java.sql.ResultSet
+
+object Implicits {
+
+  implicit class ResultSetStream(resultSet: ResultSet) {
+
+    def toStream: Stream[ResultSet] = {
+      new Iterator[ResultSet] {
+        def hasNext = resultSet.next()
+
+        def next() = resultSet
+      }.toStream
+    }
+  }
+
+}
+
+import Implicits._
+
 object PostgresFunctions extends App {
+  val msgTable = "msg"
+  val geoPosTable = "geopos"
+  val msgCol = List("MSG_ID", "DRONE_ID", "MSG_TYPE", "TEMP", "TIME")
+  val geoPosCol = List("MSG_ID", "X", "Y", "ALT", "TIME")
+
   def initServer(): Connection = {
     // DriverManager.register(new Nothing)
     classOf[org.postgresql.Driver]
     // Make the connection
     DriverManager.getConnection("jdbc:postgresql://localhost:5432/scalaproject", "scala", "42scala")
+  }
+
+  def insertMsg(conn: Connection, msg: Msg): Unit = {
+    val msgCol = List("MSG_ID", "DRONE_ID", "MSG_TYPE", "TEMP", "TIME")
+    val args = List(msg.msgId, msg.droneId, msg.msgType, msg.temp, msg.time)
+      .map(x => x.toString)
+    val stt = s"INSERT INTO msg (${msgCol.mkString(",")}) VALUES (${args.mkString(",")})"
+    val prepare_statement_add_column = conn.prepareStatement(stt)
+    prepare_statement_add_column.executeUpdate()
+    prepare_statement_add_column.close()
+    insertGeoPos(conn, msg.geoPos, msg.msgId, msg.time)
+  }
+
+  def insertGeoPos(conn: Connection, geo: GeoPos, id: Int, time: Long): Unit = {
+    val geoPosCol = List("MSG_ID", "X", "Y", "ALT", "TIME")
+    val args = List(id, geo.x, geo.y, geo.alt, time).map(x => x.toString)
+    val stt = s"INSERT INTO geopos (${geoPosCol.mkString(",")}) VALUES (${args.mkString(",")})"
+    val prepare_statement_add_column = conn.prepareStatement(stt)
+    prepare_statement_add_column.executeUpdate()
+    prepare_statement_add_column.close()
   }
 
   def insertDB(conn: Connection, table: String, col: List[String], values: List[String]): Unit = {
@@ -15,101 +60,55 @@ object PostgresFunctions extends App {
     prepare_statement_add_column.close()
   }
 
-  def getDBMsg(conn: Connection) = {
+  def anyDBRequest(conn: Connection) = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
-    var k = ""
-    while (resultSet.next()) {
-      val id = resultSet.getString("id")
-      val msg_id = resultSet.getString("msg_id")
-      val drone_id = resultSet.getString("drone_id")
-      val temp = resultSet.getString("temp")
-      val time = resultSet.getString("time")
-      val msg = resultSet.getString("msg_type")
-      k += id + " " + msg_id + " " + drone_id + " " + temp + " " + time + " " + msg + "\n"
-    }
-    k
+
+  }
+
+  def getDBMsgFold(conn: Connection, query: String): Stream[ResultSet] = {
+    val statement = conn.createStatement()
+    val resultSet = statement.executeQuery(query)
+    resultSet.toStream
+  }
+
+  def getDBMsg(conn: Connection): String = {
+    val statement = conn.createStatement()
+    val resultSet = statement.executeQuery(s"SELECT * FROM msg")
+    resultSet.toStream.map(rs => rs.getString("id") + " "
+      + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
+      + rs.getString("temp") + " " + rs.getString("temp") + " " +
+      rs.getString("msg_type") + "\n").mkString("")
   }
 
   def getDBGeoPos(conn: Connection) = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM geopos")
-    /* TODO NO VAR !!! */
-    var k = ""
-    while (resultSet.next()) {
-      val id = resultSet.getString("id")
-      val msg_id = resultSet.getString("msg_id")
-      val x = resultSet.getString("x")
-      val y = resultSet.getString("y")
-      val alt = resultSet.getString("alt")
-      val time = resultSet.getString("time")
-      k += id + "  " + msg_id + " " + x + " " + y + " " + alt + " " + time + "\n"
-    }
-    k
+    resultSet.toStream.map(rs => rs.getString("id") + " "
+      + rs.getString("msg_id") + " " + rs.getString("x") + " "
+      + rs.getString("y") + " " + rs.getString("alt") + " " +
+      rs.getString("time") + "\n").mkString("")
   }
 
   def lookDBMsg(conn: Connection): Unit = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
-    println("  id   |    msg_id   | drone_id | temp | time | MSG  |")
-    while (resultSet.next()) {
-      val id = resultSet.getString("id")
-      val msg_id = resultSet.getString("msg_id")
-      val drone_id = resultSet.getString("drone_id")
-      val temp = resultSet.getString("temp")
-      val time = resultSet.getString("time")
-      val msg = resultSet.getString("msg_type")
-      println(id + "  " + msg_id + " " + drone_id + " " + temp + " " + time + " " + msg)
-    }
+    println("   id msg drone temp time MSG")
+    println(resultSet.toStream.map(rs => rs.getString("id") + " "
+      + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
+      + rs.getString("temp") + " " + rs.getString("temp") + " " +
+      rs.getString("msg_type") + "\n").mkString(""))
+
   }
 
   def lookDBGeoPos(conn: Connection): Unit = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM geopos")
-    println("  id   |    msg_id   | x | y | alt | time  |")
-    while (resultSet.next()) {
-      val id = resultSet.getString("id")
-      val msg_id = resultSet.getString("msg_id")
-      val x = resultSet.getString("x")
-      val y = resultSet.getString("y")
-      val alt = resultSet.getString("alt")
-      val time = resultSet.getString("time")
-      println(id + "  " + msg_id + " " + x + " " + y + " " + alt + " " + time)
-    }
+    println("   id msg  x  y  alt  time")
+    println(resultSet.toStream.map(rs => rs.getString("id") + " "
+      + rs.getString("msg_id") + " " + rs.getString("x") + " "
+      + rs.getString("y") + " " + rs.getString("alt") + " " +
+      rs.getString("time") + "\n").mkString(""))
   }
 
-  /* TEST */
-  val conn = initServer()
-  val msgTable = "msg"
-  val geoPosTable = "geopos"
-  val msgCol = List("ID", "MSG_ID", "DRONE_ID", "MSG_TYPE", "TEMP", "TIME")
-  val geoPosCol = List("ID", "MSG_ID", "X", "Y", "ALT", "TIME")
-
-  insertDB(conn, msgTable, msgCol, List("1", "1", "1", "'START'", "23.0", "0"))
-  insertDB(conn, msgTable, msgCol, List("2", "1", "2", "'START'", "23.4", "0"))
-  insertDB(conn, msgTable, msgCol, List("3", "1", "3", "'START'", "25.2", "0"))
-  insertDB(conn, msgTable, msgCol, List("4", "1", "4", "'START'", "23.4", "0"))
-  insertDB(conn, msgTable, msgCol, List("5", "1", "5", "'START'", "23.2", "0"))
-  insertDB(conn, msgTable, msgCol, List("6", "1", "6", "'START'", "23.4", "0"))
-
-  /*
-  val prepare_statement = conn.prepareStatement(s" Insert into lol Values (2),(3),(5)")
-  prepare_statement.executeUpdate()
-  prepare_statement.close()
-
-  try {
-    val stm = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
-
-    val rs = stm.executeQuery("SELECT * FROM lol")
-
-    while(rs.next) {
-      println(rs.getString("id"))
-    }
-  } finally {
-    conn.close()
-  }
-  */
-
-  lookDBGeoPos(conn)
-  lookDBMsg(conn)
 }
