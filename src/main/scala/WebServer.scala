@@ -1,3 +1,4 @@
+import MsgClass.Msg
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{StatusCodes, _}
@@ -5,6 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import argonaut._
+import Argonaut._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
@@ -37,46 +39,63 @@ object WebServer {
           }*/
         }
       } ~
-      pathPrefix("msg") {
-        concat(
-          pathEnd {
-            concat(
-              get {
-                /* All msg as JSON */
-                complete(HttpEntity(ContentTypes.`application/json`, PostgresFunctions.getDBMsg(conn)))
-              },
-              post {
-                entity(as[String]) { s =>
-                  val msgJson = Parse.parse(s)
-                  msgJson match {
-                    case Right(value) => /* Send msg as MSg to DataBase */ complete("OK " + value.toString + " !")
-                    case Left(value) => complete("Error " + value)
+        pathPrefix("msg") {
+          concat(
+            pathEnd {
+              concat(
+                get {
+                  /* All msg as JSON */
+                  complete(HttpEntity(ContentTypes.`application/json`, PostgresFunctions.getDBMsg(conn)))
+                },
+                post {
+                  entity(as[String]) { s =>
+                    val msgJson = Parse.parse(s)
+                    msgJson match {
+                      case Right(value) => /* Send msg as MSg to DataBase */
+                        value.as[Msg].getOr() match {
+                          case x: Msg => PostgresFunctions.insertMsg(conn, x)
+                        }
+                        complete("OK " + value.toString + " !")
+                      case Left(value) => complete("Error " + value)
+                    }
                   }
                 }
-              }
-            )
-          },
-          path(Segment) { id =>
-            concat(
+              )
+            },
+            /* Give all messages from this drone id */
+            path("drone" / Segment) { id =>
+              /* curl -i -X GET "http://localhost:8080/msg/drone/1"   == Donne tout les msg du drone 1*/
               get {
-                complete(if (id.toInt >= idMin && id.toInt < 5) {
-                  HttpEntity(ContentTypes.`application/json`, JsonReader
-                    .getJSONbyMapLines(JsonReader.getFileLines("db/" + id + ".json"))
-                    .collect { case Right(value) => value }.next().toString())
-                } else {
+                val res = PostgresFunctions.anyDBQuery(conn, s"SELECT * FROM msg WHERE drone_id = $id;")
+                complete(
                   HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                    "Error JSON requested don't exist")
-                })
-              },
-              delete {
-                val X = "REmove json or line in json"
-                complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
-                  "WORK"))
+                    res.map(rs => rs.getString("id") + " "
+                      + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
+                      + rs.getString("temp") + " " + rs.getString("temp") + " " +
+                      rs.getString("msg_type") + "\n").mkString(""))
+                )
               }
-            )
-          }
-        )
-      }
+            } ~
+              /* Remove all msg from this drone id */
+              path("drone/remove" / Segment) { id =>
+                concat(
+                  get {
+                    /* TODO patch a row of the database */
+                    PostgresFunctions.anyDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
+                    complete(
+                      HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                        "Done!")
+                    )
+                  },
+                  delete {
+                    PostgresFunctions.anyDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,
+                      "Done!"))
+                  }
+                )
+              }
+          )
+        }
 
 
     val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
