@@ -10,7 +10,7 @@ object MsgClassTest extends App {
     // println(kJson)
     // println(kJson.asJson)
     val jsonK = kJson.asJson
-    // println(jsonK)
+    println(jsonK)
     // println(jsonK.as[Msg])
     val msg = jsonK.as[Msg]
     test("Json equals object") {
