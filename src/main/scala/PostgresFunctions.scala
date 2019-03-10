@@ -60,13 +60,7 @@ object PostgresFunctions extends App {
     prepare_statement_add_column.close()
   }
 
-  def anyDBRequest(conn: Connection) = {
-    val statement = conn.createStatement()
-    val resultSet = statement.executeQuery(s"SELECT * FROM msg")
-
-  }
-
-  def getDBMsgFold(conn: Connection, query: String): Stream[ResultSet] = {
+  def anyDBQuery(conn: Connection, query: String): Stream[ResultSet] = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(query)
     resultSet.toStream
