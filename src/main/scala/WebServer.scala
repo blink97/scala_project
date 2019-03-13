@@ -68,7 +68,8 @@ object WebServer {
               concat(
                 get {
                   /* TODO patch a row of the database */
-                  PostgresFunctions.deleteDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $id;")
+                  val idint = id.toInt.toString
+                  PostgresFunctions.deleteDBQuery(conn, s"DELETE FROM msg WHERE drone_id = $idint;")
                   complete(
                     HttpEntity(ContentTypes.`text/html(UTF-8)`,
                       "Done!")
