@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 psql postgres -c "CREATE DATABASE scalaproject"
 psql postgres -c "CREATE USER scala WITH ENCRYPTED PASSWORD '42scala'"
