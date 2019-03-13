@@ -1,5 +1,7 @@
 import java.sql._
 
+import argonaut._
+import Argonaut._
 import MsgClass.{GeoPos, Msg}
 import java.sql.ResultSet
 
@@ -60,7 +62,7 @@ object PostgresFunctions extends App {
     prepare_statement_add_column.close()
   }
 
-  def deleteDBQuery(conn: Connection, query:String) = {
+  def deleteDBQuery(conn: Connection, query: String) = {
     val statement = conn.createStatement()
     statement.executeQuery(query)
   }
@@ -79,6 +81,17 @@ object PostgresFunctions extends App {
       + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
       + rs.getString("temp") + " " + rs.getString("temp") + " " +
       rs.getString("msg_type") + "\n").mkString("")
+  }
+
+  def getDBMsgJson(conn: Connection): Stream[Json] = {
+    val statement = conn.createStatement()
+    val resultSet = statement.executeQuery(s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id;")
+    resultSet.toStream.map(rs => (Msg(rs.getInt("drone_id"),
+      rs.getInt("msg_id"),
+      rs.getString("msg_type"),
+      rs.getFloat("temp"),
+      rs.getInt("time"),
+      GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt")))).asJson)
   }
 
   def getDBGeoPos(conn: Connection) = {
