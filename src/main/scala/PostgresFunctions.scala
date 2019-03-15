@@ -86,12 +86,12 @@ object PostgresFunctions extends App {
   def getDBMsgJson(conn: Connection): Stream[Json] = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id;")
-    resultSet.toStream.map(rs => (Msg(rs.getInt("drone_id"),
+    resultSet.toStream.map(rs => Msg(rs.getInt("drone_id"),
       rs.getInt("msg_id"),
       rs.getString("msg_type"),
       rs.getFloat("temp"),
       rs.getInt("time"),
-      GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt")))).asJson)
+      GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
   }
 
   def getDBGeoPos(conn: Connection) = {
