@@ -8,12 +8,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 </head>
 <body>
 
 <div class="container">
     <h2>Données des drones</h2>
     <p></p>
+    <canvas class="my-4 chartjs-render-monitor" id="myChart" width="659" height="278" style="display: block; width: 659px; height: 278px;"></canvas>
+
     <table class="table">
         <thead>
         <tr>
@@ -26,10 +29,7 @@
         </tbody>
     </table>
 </div>
-<!-- On inclut le code Scala.js compilé -->
-<!--script type="text/javascript" src="../../../target/scala-2.12/scala_project-fastopt.js"></script-->
-<!--script type="text/javascript" src="./tab.js"></script-->
-<!-- On appelle la fonction générée en JavaScript -->
+<!-- Script de gestion du tableau -->
 <script>
     function processRequest(e) {
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -87,5 +87,35 @@
         tableau.appendChild(tr);
     }
 </script>
+<!-- Script de gestion du graphique -->
+<script>
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          datasets: [{
+            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+            lineTension: 0,
+            backgroundColor: 'transparent',
+            borderColor: '#007bff',
+            borderWidth: 4,
+            pointBackgroundColor: '#007bff'
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: false
+              }
+            }]
+          },
+          legend: {
+            display: false,
+          }
+        }
+      });
+    </script>
 </body>
 </html>
