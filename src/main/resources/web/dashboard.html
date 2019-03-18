@@ -20,9 +20,11 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Email</th>
+            <th>Drone ID</th>
+            <th>Heure</th>
+            <th>Temperature</th>
+            <th>Message</th>
+            <th>Position</th>
         </tr>
         </thead>
         <tbody id="tableau">
@@ -42,25 +44,69 @@
     {
         "tab": [
             {
-                "firstname": "John",
-                "lastname": "Doe",
-                "email": "john@exemple.com"
+                "droneId": "0",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
             },
             {
-                "firstname": "Mary",
-                "lastname": "Moe",
-                "email": "mary@exemple.com"
+                "droneId": "1",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
             },
             {
-                "firstname": "July",
-                "lastname": "Dooley",
-                "email": "july@exemple.com"
+                "droneId": "2",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
             },
             {
-                "firstname": "Etienne",
-                "lastname": "Gandilhon",
-                "email": "etienne@exemple.com"
+                "droneId": "3",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
+            },
+            {
+                "droneId": "4",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
+            },
+            {
+                "droneId": "5",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
+            },
+            {
+                "droneId": "6",
+                "msgType": "OK",
+                "time": "20h00",
+                "temp": "28°C",
+                "geoPos": "234, 243, 128"
+            },
+            {
+                "droneId": "7",
+                "msgType": "OK",
+                "time": "22h43",
+                "temp": "4°C",
+                "geoPos": "16, -243, 548"
+            },
+            {
+                "droneId": "8",
+                "msgType": "KO",
+                "time": "04h00",
+                "temp": "-12°C",
+                "geoPos": "2, -24, 0"
             }
+
         ]
     }
     var xhr = new XMLHttpRequest();
@@ -72,17 +118,23 @@
     for (var i = 0; i < tab.tab.length; i++) {
         var array = tab.tab[i];
         var tr = document.createElement("tr");
-        var tdFirstname = document.createElement("td");
-        var tdLastname = document.createElement("td");
-        var tdEmail = document.createElement("td");
+        var tdDroneId = document.createElement("td");
+        var tdMessage = document.createElement("td");
+        var tdTime = document.createElement("td");
+        var tdTemp = document.createElement("td");
+        var tdGeoPos = document.createElement("td");
 
-        tdFirstname.appendChild(document.createTextNode(array.firstname));
-        tdLastname.appendChild(document.createTextNode(array.lastname));
-        tdEmail.appendChild(document.createTextNode(array.email));
+        tdDroneId.appendChild(document.createTextNode(array.droneId));
+        tdMessage.appendChild(document.createTextNode(array.msgType));
+        tdTime.appendChild(document.createTextNode(array.time));
+        tdTemp.appendChild(document.createTextNode(array.temp));
+        tdGeoPos.appendChild(document.createTextNode(array.geoPos));
 
-        tr.appendChild(tdFirstname);
-        tr.appendChild(tdLastname);
-        tr.appendChild(tdEmail);
+        tr.appendChild(tdDroneId);
+        tr.appendChild(tdMessage);
+        tr.appendChild(tdTime);
+        tr.appendChild(tdTemp);
+        tr.appendChild(tdGeoPos);
         var tableau = document.getElementById("tableau");
         tableau.appendChild(tr);
     }
