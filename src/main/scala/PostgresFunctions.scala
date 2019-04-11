@@ -46,7 +46,7 @@ object PostgresFunctions extends App {
     insertGeoPos(conn, msg.geoPos, msg.msgId, msg.time)
   }
 
-  def insertGeoPos(conn: Connection, geo: GeoPos, id: Int, time: Long): Unit = {
+  def insertGeoPos(conn: Connection, geo: GeoPos, id: Int, time: String): Unit = {
     val geoPosCol = List("MSG_ID", "X", "Y", "ALT", "TIME")
     val args = List(id, geo.x, geo.y, geo.alt, time).map(x => x.toString)
     val stt = s"INSERT INTO geopos (${geoPosCol.mkString(",")}) VALUES (${args.mkString(",")})"
@@ -90,7 +90,7 @@ object PostgresFunctions extends App {
       rs.getInt("msg_id"),
       rs.getString("msg_type"),
       rs.getFloat("temp"),
-      rs.getInt("time"),
+      rs.getString("time"),
       GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
   }
 

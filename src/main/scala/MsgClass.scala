@@ -3,6 +3,7 @@ import Argonaut._
 
 import scala.util.Random
 import java.time.Instant
+import java.sql.Timestamp
 
 object MsgClass extends App {
 
@@ -36,7 +37,7 @@ object MsgClass extends App {
                   msgId: Int,
                   msgType: String,
                   temp: Float,
-                  time: Long,
+                  time: String,
                   geoPos: GeoPos
                 )
 
@@ -47,7 +48,7 @@ object MsgClass extends App {
     */
   def MsgFactory: Msg = {
     Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
-      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Instant.now.getEpochSecond,
+      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Timestamp.from(Instant.now).toString,
       GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
   }
 
@@ -105,13 +106,13 @@ object MsgClass extends App {
       msgId <- (m --\ "msgId").as[Int]
       msgType <- (m --\ "msgType").as[String]
       temp <- (m --\ "temp").as[Float]
-      time <- (m --\ "time").as[Long]
+      time <- (m --\ "time").as[String]
       geoPos <- (m --\ "geoPos").as[GeoPos]
     } yield Msg(droneId, msgId, msgType, temp, time, geoPos))
   }
 
   // Test
-  val kJson = Msg(1, 1, "Error", 23.6f, 6464654654654L, GeoPos(34243, 23224, 232))
+  val kJson = Msg(1, 1, "Error", 23.6f, "'2007-01-01 00:00:00.00'", GeoPos(34243, 23224, 232))
   println(kJson)
   println(kJson.asJson)
   val jsonK = kJson.asJson

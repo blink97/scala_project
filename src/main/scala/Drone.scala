@@ -38,7 +38,7 @@ class Drone(drone_id: Int) {
     val randGeo = 100000
 
     val msg = Msg(id, message_id,
-      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Instant.now.getEpochSecond,
+      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Instant.now.toString,
       GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
 
     message_id += 1 // TODO : var
