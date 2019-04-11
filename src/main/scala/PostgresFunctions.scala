@@ -79,8 +79,12 @@ object PostgresFunctions extends App {
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
     resultSet.toStream.map(rs => rs.getString("id") + " "
       + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
-      + rs.getString("temp") + " " + rs.getString("temp") + " " +
+      + rs.getString("temp") + " " + rs.getString("time") + " " +
       rs.getString("msg_type") + "\n").mkString("")
+  }
+
+  def getJsonAsText(s: Stream[Json]): String = {
+    s.mkString("\n")
   }
 
   def getDBMsgJson(conn: Connection): Stream[Json] = {
@@ -106,10 +110,10 @@ object PostgresFunctions extends App {
   def lookDBMsg(conn: Connection): Unit = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
-    println("   id msg drone temp time MSG")
+    println("id msg drone temp time MSG")
     println(resultSet.toStream.map(rs => rs.getString("id") + " "
       + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
-      + rs.getString("temp") + " " + rs.getString("temp") + " " +
+      + rs.getString("temp") + " " + rs.getString("time") + " " +
       rs.getString("msg_type") + "\n").mkString(""))
 
   }

@@ -45,7 +45,7 @@ object WebServer {
               concat(
                 get {
                   /* All msg as JSON */
-                  complete(HttpEntity(ContentTypes.`application/json`, PostgresFunctions.getDBMsg(conn)))
+                  complete(HttpEntity(ContentTypes.`application/json`, PostgresFunctions.getJsonAsText(PostgresFunctions.getDBMsgJson(conn))))
                 },
                 /* curl -i -X POST -d "{\"droneId\":1,\"msgId\":1,\"msgType\":\"'Error'\",\"temp\":23.6, \"time\": 46,\"geoPos\":{\"x\":34243,\"y\":23224,\"alt\":232}}" "http://localhost:8080/msg" */
                 post {
