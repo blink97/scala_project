@@ -84,12 +84,13 @@ object PostgresFunctions extends App {
   }
 
   def getJsonAsText(s: Stream[Json]): String = {
-    s.mkString("\n")
+    s.map(x => x.toString()).reduceLeft(_ + "\n" + _).mkString("\n")
   }
 
   def getDBMsgJson(conn: Connection): Stream[Json] = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id;")
+    println(resultSet)
     resultSet.toStream.map(rs => Msg(rs.getInt("drone_id"),
       rs.getInt("msg_id"),
       rs.getString("msg_type"),
