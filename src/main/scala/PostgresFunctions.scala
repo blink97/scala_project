@@ -83,20 +83,63 @@ object PostgresFunctions extends App {
       rs.getString("msg_type") + "\n").mkString("")
   }
 
-  def getJsonAsText(s: Stream[Json]): String = {
-    s.map(x => x.toString()).reduceLeft(_ + "\n" + _).mkString("\n")
+  def getJsonAsText(s: List[JsonField]): String = {
+    println(s)
+    s.foreach(x => println(x))
+    s.mkString("\n")
   }
 
-  def getDBMsgJson(conn: Connection): Stream[Json] = {
+  def getDBMsgJson(conn: Connection): String = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id;")
-    println(resultSet)
-    resultSet.toStream.map(rs => Msg(rs.getInt("drone_id"),
-      rs.getInt("msg_id"),
-      rs.getString("msg_type"),
-      rs.getFloat("temp"),
-      rs.getString("time"),
-      GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
+    Iterator.continually{ resultSet }.takeWhile{ _.next() }.map{ rs =>
+      Msg(rs.getInt("drone_id"),
+        rs.getInt("msg_id"),
+        rs.getString("msg_type"),
+        rs.getFloat("temp"),
+        rs.getString("time"),
+        GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt")))
+    }
+      .toList
+      .map(x => x.asJson)
+      .map(x => x.toString())
+      .mkString("\n")
+    //  .asJson)
+    // resultSet.toStream.map(x => println(x))
+    /*
+    resultSet
+      .map(rs => Msg(rs.getInt("drone_id"),
+        rs.getInt("msg_id"),
+        rs.getString("msg_type"),
+        rs.getFloat("temp"),
+        rs.getString("time"),
+        GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt")))
+        .asJson)
+      .map(x => x.toString())
+      .mkString("\n")
+      */
+
+    /* WARNING TODO FIXME USING IMPERATIVE */
+    /*
+    while (resultSet.next()) {
+      l = l :: Msg(resultSet.getInt("drone_id"),
+        resultSet.getInt("msg_id"),
+        resultSet.getString("msg_type"),
+        resultSet.getFloat("temp"),
+        resultSet.getString("time"),
+        GeoPos(resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("alt")))
+    }
+    */
+    /*
+        val res = resultSet.toString
+        map (rs => Msg(rs.getInt("drone_id"),
+          rs.getInt("msg_id"),
+          rs.getString("msg_type"),
+          rs.getFloat("temp"),
+          rs.getString("time"),
+          GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
+        l
+        */
   }
 
   def getDBGeoPos(conn: Connection) = {
