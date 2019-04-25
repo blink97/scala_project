@@ -21,10 +21,10 @@
         <thead>
         <tr>
             <th>Drone ID</th>
-            <th>Heure</th>
-            <th>Temperature</th>
             <th>Message</th>
-            <th>Position</th>
+            <th>Date</th>
+            <th>Temperature (°C)</th>
+            <th>Position (X, Y, Altitude)</th>
         </tr>
         </thead>
         <tbody id="tableau">
@@ -35,109 +35,42 @@
 <script>
     function processRequest(e) {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            console.log(xhr)
-        }
-    }
+            var json = xhr.responseText
+            json = json.replace(/(?:\r\n|\r|\n)/g, ',')
+            json = '{"tab":[' + json + ']}'
+            trueJson = JSON.parse(json)
+            console.log(trueJson)
 
+            for (var i = 0; i < trueJson.tab.length; i++) {
+                var array = trueJson.tab[i];
+                var tr = document.createElement("tr");
+                var tdDroneId = document.createElement("td");
+                var tdMessage = document.createElement("td");
+                var tdTime = document.createElement("td");
+                var tdTemp = document.createElement("td");
+                var tdGeoPos = document.createElement("td");
 
-    var tab =
-    {
-        "tab": [
-            {
-                "droneId": "0",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "1",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "2",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "3",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "4",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "5",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "6",
-                "msgType": "OK",
-                "time": "20h00",
-                "temp": "28°C",
-                "geoPos": "234, 243, 128"
-            },
-            {
-                "droneId": "7",
-                "msgType": "OK",
-                "time": "22h43",
-                "temp": "4°C",
-                "geoPos": "16, -243, 548"
-            },
-            {
-                "droneId": "8",
-                "msgType": "KO",
-                "time": "04h00",
-                "temp": "-12°C",
-                "geoPos": "2, -24, 0"
+                tdDroneId.appendChild(document.createTextNode(array.droneId));
+                tdMessage.appendChild(document.createTextNode(array.msgType));
+                tdTime.appendChild(document.createTextNode(array.time));
+                tdTemp.appendChild(document.createTextNode(array.temp));
+                tdGeoPos.appendChild(document.createTextNode(array.geoPos.x + ', ' + array.geoPos.y + ', ' + array.geoPos.alt));
+
+                tr.appendChild(tdDroneId);
+                tr.appendChild(tdMessage);
+                tr.appendChild(tdTime);
+                tr.appendChild(tdTemp);
+                tr.appendChild(tdGeoPos);
+                var tableau = document.getElementById("tableau");
+                tableau.appendChild(tr);
             }
-
-        ]
+        }
     }
     var xhr = new XMLHttpRequest();
     xhr.open( "GET", "http://localhost:8080/msg");
     xhr.send();
 
     xhr.onreadystatechange = processRequest;
-
-    for (var i = 0; i < tab.tab.length; i++) {
-        var array = tab.tab[i];
-        var tr = document.createElement("tr");
-        var tdDroneId = document.createElement("td");
-        var tdMessage = document.createElement("td");
-        var tdTime = document.createElement("td");
-        var tdTemp = document.createElement("td");
-        var tdGeoPos = document.createElement("td");
-
-        tdDroneId.appendChild(document.createTextNode(array.droneId));
-        tdMessage.appendChild(document.createTextNode(array.msgType));
-        tdTime.appendChild(document.createTextNode(array.time));
-        tdTemp.appendChild(document.createTextNode(array.temp));
-        tdGeoPos.appendChild(document.createTextNode(array.geoPos));
-
-        tr.appendChild(tdDroneId);
-        tr.appendChild(tdMessage);
-        tr.appendChild(tdTime);
-        tr.appendChild(tdTemp);
-        tr.appendChild(tdGeoPos);
-        var tableau = document.getElementById("tableau");
-        tableau.appendChild(tr);
-    }
 </script>
 <!-- Script de gestion du graphique -->
 <script>
