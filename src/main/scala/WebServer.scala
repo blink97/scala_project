@@ -82,30 +82,30 @@ object WebServer {
                 }
               )
             } ~
-            /* Give all messages from this drone id */
-            path("drone" / Segment) { id =>
-              /* curl -i -X GET "http://localhost:8080/msg/drone/1"   == Donne tout les msg du drone 1*/
-              get {
-                val resultSet = PostgresFunctions.anyDBQuery(conn, s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id WHERE msg.drone_id = $id;")
-                complete(
-                  HttpEntity(ContentTypes.`application/json`,
-                    resultSet.toStream.map(rs => Msg(rs.getInt("drone_id"),
-                      rs.getInt("msg_id"),
-                      rs.getString("msg_type"),
-                      rs.getFloat("temp"),
-                      rs.getString("time"),
-                      GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
-                      .mkString("\n")
-                  )
+              /* Give all messages from this drone id */
+              path("drone" / Segment) { id =>
+                /* curl -i -X GET "http://localhost:8080/msg/drone/1"   == Donne tout les msg du drone 1*/
+                get {
+                  val resultSet = PostgresFunctions.anyDBQuery(conn, s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id WHERE msg.drone_id = $id;")
+                  complete(
+                    HttpEntity(ContentTypes.`application/json`,
+                      resultSet.toStream.map(rs => Msg(rs.getInt("drone_id"),
+                        rs.getInt("msg_id"),
+                        rs.getString("msg_type"),
+                        rs.getFloat("temp"),
+                        rs.getString("time"),
+                        GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
+                        .mkString("\n")
+                    )
                     /*
                     res.map(rs => rs.getString("id") + " "
                       + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
                       + rs.getString("temp") + " " + rs.getString("temp") + " " +
                       rs.getString("msg_type") + "\n").mkString(""))
                       */
-                )
+                  )
+                }
               }
-            }
           )
         }
 
