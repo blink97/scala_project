@@ -48,12 +48,21 @@ class Drone(drone_id: Int) {
 
   def postJson(json : Json = generateMsg()) : Unit = {
 
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "json/" + id, entity = ByteString(json.toString())))
+    //val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg/" + id, entity = ByteString(json.toString())))
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg", entity = ByteString(json.toString())))
 
     responseFuture
       .onComplete {
         case Success(res) => println(res)
         case Failure(_)   => sys.error("something wrong")
       }
+  }
+}
+
+object demo {
+
+  def main(args: Array[String]): Unit = {
+    val drone : Drone = new Drone(3)
+    drone.postJson()
   }
 }
