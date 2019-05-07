@@ -15,6 +15,8 @@ import akka.util.ByteString
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Random, Success}
 
+import java.sql.Timestamp
+
 class Drone(drone_id: Int) {
 
   val id : Int = drone_id
@@ -38,8 +40,8 @@ class Drone(drone_id: Int) {
     val randGeo = 100000
 
     val msg = Msg(id, message_id,
-      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Instant.now.toString,
-      GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
+      "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat, "'" + Timestamp.from(Instant.now).toString + "'",
+      GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))  
 
     message_id += 1 // TODO : var
 
