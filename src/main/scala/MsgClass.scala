@@ -52,7 +52,6 @@ object MsgClass extends App {
     val randTempD = 5
     val randTempH = 130
     val randGeo = 100000
-    println("Max rand id max : " + randIdMax)
     Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
       "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat, "'" + Timestamp.from(Instant.now).toString + "'",
       GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
