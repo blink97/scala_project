@@ -47,7 +47,7 @@ object WebServer {
                   /* All msg as JSON */
                   complete(HttpEntity(ContentTypes.`application/json`, PostgresFunctions.getDBMsgJson(conn)))
                 },
-                /* curl -i -X POST -d "{\"droneId\":1,\"msgId\":1,\"msgType\":\"'Error'\",\"temp\":23.6, \"time\": \"'2007-05-17 22:00:00.00'\",\"geoPos\":{\"x\":34243,\"y\":23224,\"alt\":232}}" "http://localhost:8080/msg" */
+                /* curl -i -X POST -d "{\"droneId\":999,\"msgId\":1,\"msgType\":\"'TEST'\",\"temp\":23.6, \"time\": \"'2007-05-17 22:00:00.00'\",\"geoPos\":{\"x\":34243,\"y\":23224,\"alt\":232}}" "http://localhost:8080/msg" */
                 post {
                   entity(as[String]) { s =>
                     val msgJson = Parse.parse(s)

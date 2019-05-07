@@ -8,7 +8,7 @@ import java.sql.Timestamp
 object MsgClass extends App {
 
   val randIdMax = 1000000
-  val randIdMsg = 100000000
+  val randIdMsg = 1000000
   val randTempD = 5
   val randTempH = 130
   val randGeo = 100000
@@ -47,8 +47,14 @@ object MsgClass extends App {
     * @return Msg
     */
   def MsgFactory: Msg = {
+    val randIdMax = 1000000
+    val randIdMsg = 1000000
+    val randTempD = 5
+    val randTempH = 130
+    val randGeo = 100000
+    println("Max rand id max : " + randIdMax)
     Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
-      "Error", (Random.nextInt(randTempH) + randTempD).toFloat, Timestamp.from(Instant.now).toString,
+      "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat, "'" + Timestamp.from(Instant.now).toString + "'",
       GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
   }
 
