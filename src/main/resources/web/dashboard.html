@@ -42,6 +42,8 @@
             json = '{"tab":[' + json + ']}'
             trueJson = JSON.parse(json)
             console.log(trueJson)
+            labels = []
+            temps = []
 
             for (var i = 0; i < trueJson.tab.length; i++) {
                 var array = trueJson.tab[i];
@@ -57,6 +59,9 @@
                 tdTime.appendChild(document.createTextNode(array.time));
                 tdTemp.appendChild(document.createTextNode(array.temp));
                 tdGeoPos.appendChild(document.createTextNode(array.geoPos.x + ', ' + array.geoPos.y + ', ' + array.geoPos.alt));
+
+                labels.push(new Date(array.time));
+                temps.push(array.temp);
 
                 tr.appendChild(tdDroneId);
                 tr.appendChild(tdMessage);
@@ -75,9 +80,9 @@
             var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                  labels: [new Date(2000,0), new Date(2000,1), new Date(2000,2), new Date(2000,3), new Date(2000,4), new Date(2000,5), new Date(2000,6)],
+                  labels: labels,
                   datasets: [{
-                    data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
+                    data: temps,
                     lineTension: 0,
                     backgroundColor: 'transparent',
                     borderColor: '#007bff',
@@ -92,6 +97,7 @@
                         beginAtZero: false
                       }
                     }]
+                    
                   },
                   legend: {
                     display: false,
