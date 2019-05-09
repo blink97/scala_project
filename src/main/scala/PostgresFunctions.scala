@@ -91,42 +91,6 @@ object PostgresFunctions extends App {
       .map(x => x.asJson)
       .map(x => x.toString())
       .mkString("\n")
-    //  .asJson)
-    // resultSet.toStream.map(x => println(x))
-    /*
-    resultSet
-      .map(rs => Msg(rs.getInt("drone_id"),
-        rs.getInt("msg_id"),
-        rs.getString("msg_type"),
-        rs.getFloat("temp"),
-        rs.getString("time"),
-        GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt")))
-        .asJson)
-      .map(x => x.toString())
-      .mkString("\n")
-      */
-
-    /* WARNING TODO FIXME USING IMPERATIVE */
-    /*
-    while (resultSet.next()) {
-      l = l :: Msg(resultSet.getInt("drone_id"),
-        resultSet.getInt("msg_id"),
-        resultSet.getString("msg_type"),
-        resultSet.getFloat("temp"),
-        resultSet.getString("time"),
-        GeoPos(resultSet.getInt("x"), resultSet.getInt("y"), resultSet.getInt("alt")))
-    }
-    */
-    /*
-        val res = resultSet.toString
-        map (rs => Msg(rs.getInt("drone_id"),
-          rs.getInt("msg_id"),
-          rs.getString("msg_type"),
-          rs.getFloat("temp"),
-          rs.getString("time"),
-          GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
-        l
-        */
   }
 
   def getDBGeoPos(conn: Connection) = {
