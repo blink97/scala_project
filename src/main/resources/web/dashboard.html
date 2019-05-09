@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 </head>
 <body>
 
@@ -42,6 +43,7 @@
             json = '{"tab":[' + json + ']}'
             trueJson = JSON.parse(json)
             console.log(trueJson)
+            list4Chart = new Array()
             labels = []
             temps = []
 
@@ -60,8 +62,9 @@
                 tdTemp.appendChild(document.createTextNode(array.temp));
                 tdGeoPos.appendChild(document.createTextNode(array.geoPos.x + ', ' + array.geoPos.y + ', ' + array.geoPos.alt));
 
-                labels.push(new Date(array.time));
-                temps.push(array.temp);
+                list4Chart[i] = {};
+                list4Chart[i]['labels'] = new Date(array.time);
+                list4Chart[i]['temps'] = array.temp;
 
                 tr.appendChild(tdDroneId);
                 tr.appendChild(tdMessage);
@@ -75,6 +78,16 @@
             $(document).ready(function () {
                 $('#dt').DataTable();
             });
+
+
+            list4Chart.sort(function(x, y){
+                return x.labels - y.labels;
+            })
+
+            for (var j = 0; j < list4Chart.length; j++) {
+                labels.push(list4Chart[j]['labels'])
+                temps.push(list4Chart[j]['temps'])
+            }
 
             var ctx = document.getElementById("myChart");
             var myChart = new Chart(ctx, {
@@ -96,8 +109,15 @@
                       ticks: {
                         beginAtZero: false
                       }
+                    }],
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            displayFormats: {
+                                quarter: 'MMM YYYY'
+                            }
+                        }
                     }]
-                    
                   },
                   legend: {
                     display: false,
