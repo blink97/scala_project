@@ -1,35 +1,32 @@
 # scala_project
 
-## Start
+## Start Database
 
-```sh
-sbt clean compile
-sbt run
+> WARNING! Require **postgresql**  (psql (PostgreSQL) 10.7 )
+
+0. Install postgresql if need as super user!
+1. Execute `db/postgres_databas_create.sh`
+2. Check in your terminal:
+    * `psql -h localhost -U scala scalaproject`
+    * input password : `42scala`
+    * type : `\d` + `ENTER`
+    * You should see 2 tables, and 2 sequences
+```
+scalaproject=> \d
+             List of relations
+ Schema |     Name      |   Type   | Owner 
+--------+---------------+----------+-------
+ public | geopos        | table    | scala
+ public | geopos_id_seq | sequence | scala
+ public | msg           | table    | scala
+ public | msg_id_seq    | sequence | scala
+(4 rows)
 ```
 
-In the project root directory:
+## Start WebServer
 
-## sbt commands
 
-* compile
-
-```sh
-sbt compile
-```
-
-* run
-
-```sh
-sbt run
-```
-
-* ship and package the project
-
-```sh
-sbt package
-```
-
-* clean
+## Start Drones
 
 
 ## Web Endpoints
@@ -57,17 +54,49 @@ sbt package
 | drone_id | INT |
 | msg_type | CHAR(64) |
 | temp | REAL (aka float) |
-| time | TIMESTAMP |
+| time | TIMESTAMP (as CHAR(64)) |
 
 * Table **geopos** (all fields not null)
 
 | col | type       |
 |-----|------------|
-| id  | SERIAL     |
-| msg_id | INT |
+| id  | SERIAL (linked to id of msg table!)    |
 | x | INT |
 | y | INT |
 | alt | INT |
-| time | TIMESTAMP |
+| time | TIMESTAMP (as CHAR(64)) |
 
+
+## SBT Usage
+
+### Start 
+
+```sh
+sbt clean compile
+sbt run
+```
+
+In the project root directory:
+
+### sbt commands
+
+* compile
+
+```sh
+sbt compile
+```
+
+* run
+
+```sh
+sbt run
+```
+
+* ship and package the project
+
+```sh
+sbt package
+```
+
+* clean
 
