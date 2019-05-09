@@ -2,6 +2,7 @@
 import java.time.Instant
 
 import MsgClass.{GeoPos, Msg}
+import JsonReader.{getJSONbyMapLines, getFileLines}
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.HttpMethods._
 import akka.stream.ActorMaterializer
@@ -61,6 +62,18 @@ object Client {
           case Failure(_)   => sys.error("something wrong")
         }
     }
+
+
+    def sendNewData() : Unit = {
+      val path = "testJson.json"
+
+      val res: Iterator[Either[String, Json]] = getJSONbyMapLines(getFileLines(path))
+
+      res.foreach(x => x match {
+      case Right(s) => postJson(s)
+    })
+    
+    }
   }
 
   def main(args: Array[String]): Unit = {
@@ -83,6 +96,8 @@ object Client {
       println("Drone :" + drone.id + " sending message:" + idMessage)
 
       drone.postJson()
+
+      Thread.sleep(500)
 
       if (idMessage <= nb_messages)
         calls(drone, idMessage + 1)
