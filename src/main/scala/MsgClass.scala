@@ -16,8 +16,8 @@ object MsgClass extends App {
   /**
     * Drone Geographical Position Class/Tuple
     *
-    * @param x Int X Coord
-    * @param y Int Y Coord
+    * @param x   Int X Coord
+    * @param y   Int Y Coord
     * @param alt Int Altitude in meters
     */
   case class GeoPos(x: Int, y: Int, alt: Int)
@@ -26,11 +26,11 @@ object MsgClass extends App {
     * Drone Message Class
     *
     * @param droneId Int drone Id
-    * @param msgId Int message id
+    * @param msgId   Int message id
     * @param msgType String the message content
-    * @param temp Float Temperature
-    * @param time Long TimeStamp
-    * @param geoPos Object Geographical Position Object
+    * @param temp    Float Temperature
+    * @param time    Long TimeStamp
+    * @param geoPos  Object Geographical Position Object
     */
   case class Msg(
                   droneId: Int,
@@ -38,6 +38,7 @@ object MsgClass extends App {
                   msgType: String,
                   temp: Float,
                   time: String,
+               // battery: Int
                   geoPos: GeoPos
                 )
 
@@ -52,9 +53,15 @@ object MsgClass extends App {
     val randTempD = 5
     val randTempH = 130
     val randGeo = 100000
-    Msg(Random.nextInt(randIdMax), Random.nextInt(randIdMsg),
-      "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat, "'" + Timestamp.from(Instant.now).toString + "'",
-      GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))
+    Msg(
+      Random.nextInt(randIdMax),
+      Random.nextInt(randIdMsg),
+      "'Error'",
+      (Random.nextInt(randTempH) + randTempD).toFloat,
+      "'" + Timestamp.from(Instant.now).toString + "'",
+      GeoPos(Random.nextInt(randGeo),
+        Random.nextInt(randGeo),
+        Random.nextInt(randGeo)))
   }
 
   /**
@@ -74,6 +81,7 @@ object MsgClass extends App {
   /**
     * Give the message object Msg from Json
     * Use .asJson
+    *
     * @return EncodeJson[Msg]
     */
   implicit def MsgEncodeJson: EncodeJson[Msg] = {
@@ -103,6 +111,7 @@ object MsgClass extends App {
   /**
     * Get Msg from Json
     * Access with  .getOr()
+    *
     * @return DecodeJson[Msg]
     */
   implicit def MsgDecodeJson: DecodeJson[Msg] = {
