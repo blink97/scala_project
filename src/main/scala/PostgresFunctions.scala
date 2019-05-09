@@ -1,25 +1,8 @@
 import java.sql._
-
 import argonaut._
 import Argonaut._
 import MsgClass.{GeoPos, Msg}
 import java.sql.ResultSet
-
-object Implicits {
-
-  implicit class ResultSetStream(resultSet: ResultSet) {
-
-    def toStream: Stream[ResultSet] = {
-      new Iterator[ResultSet] {
-        def hasNext = resultSet.next()
-
-        def next() = resultSet
-      }.toStream
-    }
-  }
-
-}
-
 import Implicits._
 
 object PostgresFunctions extends App {
@@ -92,7 +75,11 @@ object PostgresFunctions extends App {
   def getDBMsgJson(conn: Connection): String = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg JOIN geopos ON msg.msg_id = geopos.msg_id;")
-    Iterator.continually{ resultSet }.takeWhile{ _.next() }.map{ rs =>
+    Iterator.continually {
+      resultSet
+    }.takeWhile {
+      _.next()
+    }.map { rs =>
       Msg(rs.getInt("drone_id"),
         rs.getInt("msg_id"),
         rs.getString("msg_type"),
