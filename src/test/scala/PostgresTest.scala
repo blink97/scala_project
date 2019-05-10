@@ -42,7 +42,7 @@ object PostgresTest extends App {
 
     insertMsg(conn, MsgClass.MsgFactory)
 
-    lookDBGeoPos(conn)
+    // lookDBGeoPos(conn)
     lookDBMsg(conn)
 
     println(getDBMsg(conn))
