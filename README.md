@@ -10,14 +10,12 @@
     * `psql -h localhost -U scala scalaproject`
     * input password : `42scala`
     * type : `\d` + `ENTER`
-    * You should see 2 tables, and 2 sequences
+    * You should see 1 table, and 1 sequence
 ```
 scalaproject=> \d
              List of relations
  Schema |     Name      |   Type   | Owner 
 --------+---------------+----------+-------
- public | geopos        | table    | scala
- public | geopos_id_seq | sequence | scala
  public | msg           | table    | scala
  public | msg_id_seq    | sequence | scala
 (4 rows)
@@ -55,17 +53,9 @@ scalaproject=> \d
 | msg_type | CHAR(64) |
 | temp | REAL (aka float) |
 | time | TIMESTAMP (as CHAR(64)) |
-
-* Table **geopos** (all fields not null)
-
-| col | type       |
-|-----|------------|
-| id  | SERIAL (linked to id of msg table!)    |
 | x | INT |
 | y | INT |
 | alt | INT |
-| time | TIMESTAMP (as CHAR(64)) |
-
 
 ## SBT Usage
 
