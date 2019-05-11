@@ -50,12 +50,21 @@ object MsgClass extends App {
     * @return Msg
     */
   def MsgFactory(drone_id : Int = Random.nextInt(randIdMax)): Msg = {
-    val randIdMax = 1000000
-    val randTempD = 5
-    val randTempH = 130
+    val randTempD = -15
+    val randTempH = 150
     val randGeo = 100000
     val drone_heat = (Random.nextInt(randTempH) + randTempD).toFloat
-    if (drone_heat > 50)
+    val error_rate = Random.nextInt(100)
+    if (error_rate >= 95)
+      Msg(
+        drone_id,
+        "'ERROR'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(4000)))
+    else if (drone_heat > 90)
       Msg(
         drone_id,
         "'HOT'",
