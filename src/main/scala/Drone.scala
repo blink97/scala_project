@@ -45,16 +45,22 @@ object Client {
         "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat,
         "'" + Timestamp.from(Instant.now).toString + "'",
         GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo),
-          Random.nextInt(randGeo)))
+          Random.nextInt(4000)))
 
       msg.asJson
     }
 
+    /**
+    * postJson
+    *
+    * @param json - json to send to the server
+    * Send the json to the server
+    */
     def postJson(json: Json = generateMsg()): Unit = {
 
       // In order to slow down the process so the server doesn't crash
       Thread.sleep(Random.nextInt(200) + 100)
-      
+
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg", entity = ByteString(json.toString())))
 
       responseFuture
@@ -64,7 +70,12 @@ object Client {
         }
     }
 
-    
+    /**
+    * sendNewData
+    *
+    * @param path - path to the json containning data
+    * Call postJson on every Json in the file
+    */
     def sendNewData(path : String = "testJsonv3.json"): Unit = {
       val res: Iterator[Either[String, Json]] = getJSONbyMapLines(getFileLines(path))
 
@@ -76,6 +87,14 @@ object Client {
   }
 
   def main(args: Array[String]): Unit = {
+    
+    // TODO: Error message if args(0) is empty
+
+    val drone: Drone = new Drone(args(0).toInt)
+
+    drone.sendNewData("json_Drone" + args(0))
+    
+    /*
     val nb_drones = 10
     val nb_messages = 100
 
@@ -83,12 +102,12 @@ object Client {
     def generateDrones(id: Int = 0): Unit = {
 
       val drone: Drone = new Drone(id)
-      //calls(drone)
-      drone.sendNewData()
+      calls(drone)
 
       if (id <= nb_drones)
         generateDrones(id + 1)
     }
+    */
 
     /*
     def calls(drone: Drone, idMessage: Int = 1): Unit = {
@@ -102,9 +121,11 @@ object Client {
       if (idMessage <= nb_messages)
         calls(drone, idMessage + 1)
     }
-    */
+
 
     generateDrones()
+    */
+
   }
 
 }
