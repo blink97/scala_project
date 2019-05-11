@@ -17,7 +17,23 @@
 <div class="container">
     <h2>Données des drones</h2>
     <p></p>
-    <canvas class="my-4 chartjs-render-monitor" id="myChart" width="659" height="278" style="display: block; width: 659px; height: 278px;"></canvas>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="minute-tab" data-toggle="tab" href="#minute" role="tab" aria-controls="1minute" aria-selected="true">Nombre de drones (par minute)</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="cumul-tab" data-toggle="tab" href="#cumul" role="tab" aria-controls="cumul" aria-selected="false">Cumule des messages</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="minute" role="tabpanel" aria-labelledby="minute-tab">
+            <canvas class="my-4 chartjs-render-monitor" id="myChartMinute" width="659" height="278" style="display: block; width: 659px; height: 278px;"></canvas>
+        </div>
+        <div class="tab-pane fade" id="cumul" role="tabpanel" aria-labelledby="cumul-tab">
+            <canvas class="my-4 chartjs-render-monitor" id="myChartCumul" width="659" height="278" style="display: block; width: 659px; height: 278px;"></canvas>
+        </div>
+    </div>
+
 
     <table class="table table-striped table-bordered" id="dt">
         <thead>
@@ -44,14 +60,24 @@
             console.log(trueJson)
             list4Chart = new Array()
             labels = []
+            labelsMinute = []
+
+            nbDroneOK = []
+            nbDroneERROR = []
+            nbDroneHOT = []
+            nbDroneCOLD = []
+
             tempsOK = []
             tempsERROR = []
             tempsHOT = []
             tempsCOLD = []
+
             var cptOK = 0
             var cptERROR = 0
             var cptHOT = 0
             var cptCOLD = 0
+
+            var cptMinute = 0
 
             for (var i = 0; i < trueJson.tab.length; i++) {
                 var array = trueJson.tab[i];
@@ -73,17 +99,31 @@
                 //Create data for chart
                 list4Chart[i] = {};
                 list4Chart[i]['labels'] = new Date(array.time.substring(0, 22));
+                if (!labelsMinute.includes(array.time.substring(0,10))) {
+                    labelsMinute.push(array.time.substring(0,10));
+                    list4Chart[cptMinute]['labelsMinute'] = new Date(array.time.substring(0,10));
+                    list4Chart[cptMinute]['tempsMinuteOK'] = 0
+                    list4Chart[cptMinute]['tempsMinuteERROR'] = 0
+                    list4Chart[cptMinute]['tempsMinuteHOT'] = 0
+                    list4Chart[cptMinute]['tempsMinuteCOLD'] = 0
+
+                    cptMinute += 1
+                }
                 if (array.msgType.substring(0,2) == "OK") {
                     cptOK += 1;
+                    list4Chart[cptMinute - 1]['tempsMinuteOK'] += 1;
                 }
                 else if (array.msgType.substring(0,5) == "ERROR") {
                     cptERROR += 1;
+                    list4Chart[cptMinute - 1]['tempsMinuteERROR'] += 1;
                 }
                 else if (array.msgType.substring(0,3) == "HOT") {
                     cptHOT += 1;
+                    list4Chart[cptMinute - 1]['tempsMinuteHOT'] += 1;
                 }
                 else if (array.msgType.substring(0,4) == "COLD") {
-                    cptCOLD += 2;
+                    cptCOLD += 1;
+                    list4Chart[cptMinute - 1]['tempsMinuteCOLD'] += 1;
                 }
                 list4Chart[i]['tempsOK'] = cptOK;
                 list4Chart[i]['tempsERROR'] = cptERROR;
@@ -107,11 +147,19 @@
             });
 
 
+            labelsMinute = []
             list4Chart.sort(function(x, y){
                 return x.labels - y.labels;
             })
 
             for (var j = 0; j < list4Chart.length; j++) {
+                if (j < cptMinute) {
+                    labelsMinute.push(list4Chart[j]['labelsMinute'])
+                    nbDroneOK.push(list4Chart[j]['tempsMinuteOK'])
+                    nbDroneERROR.push(list4Chart[j]['tempsMinuteERROR'])
+                    nbDroneHOT.push(list4Chart[j]['tempsMinuteHOT'])
+                    nbDroneCOLD.push(list4Chart[j]['tempsMinuteCOLD'])
+                }
                 labels.push(list4Chart[j]['labels'])
                 tempsOK.push(list4Chart[j]['tempsOK'])
                 tempsERROR.push(list4Chart[j]['tempsERROR'])
@@ -119,12 +167,8 @@
                 tempsCOLD.push(list4Chart[j]['tempsCOLD'])
             }
 
-            console.log(tempsOK);
-            console.log(tempsERROR);
-            console.log(tempsHOT);
-            console.log(tempsCOLD);
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
+            var ctxCumul = document.getElementById("myChartCumul");
+            var myChartCumul = new Chart(ctxCumul, {
                 type: 'line',
                 data: {
                   labels: labels,
@@ -188,6 +232,72 @@
                   }
                 }
               });
+
+        var ctxMinute = document.getElementById("myChartMinute");
+        var myChartMinute = new Chart(ctxMinute, {
+            type: 'line',
+            data: {
+              labels: labelsMinute,
+              datasets: [{
+                data: nbDroneOK,
+                label: 'OK',
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#00ff00',
+                borderWidth: 4,
+                pointBackgroundColor: '#00ff00'
+              },{
+                data: nbDroneERROR,
+                label: 'ERROR',
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#ff0000',
+                borderWidth: 4,
+                pointBackgroundColor: '#ff0000'
+              },{
+                data: nbDroneHOT,
+                label: 'HOT',
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#ffa500',
+                borderWidth: 4,
+                pointBackgroundColor: '#ffa500'
+              },{
+                data: nbDroneCOLD,
+                label: 'COLD',
+                lineTension: 0,
+                backgroundColor: 'transparent',
+                borderColor: '#0000ff',
+                borderWidth: 4,
+                pointBackgroundColor: '#0000ff'
+              }]
+            },
+            options: {
+              spanGaps : true,
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: false,
+                  },
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Nombre de Drones'
+                  }
+                }],
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            quarter: 'MMM YYYY'
+                        }
+                    }
+                }]
+              },
+              legend: {
+                display: true,
+              }
+            }
+          });
         }
     }
     var xhr = new XMLHttpRequest();
