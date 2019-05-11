@@ -26,7 +26,7 @@ object DroneDataGenerator {
     * @param args nb of drones
     */
   def main(args: Array[String]): Unit = {
-    val nb_messages = 100
+    val nb_messages = 40
     val ids = args(0).toInt
     var fws: Array[FileWriter] = new Array[FileWriter](ids + 1)
     for (i <- 1 to ids) {
@@ -34,8 +34,23 @@ object DroneDataGenerator {
     }
 
     for (_ <- 1 to nb_messages) {
-      Thread.sleep(Random.nextInt(1000) + 1000)
-      for (i <- 1 to ids) {
+      Thread.sleep(Random.nextInt(5000) + 5000)
+      println(ids/4, ids/2)
+      for (i <- 1 to ids/4) {
+        val json: Json = MsgFactory(i).asJson
+        try {
+          fws(i).write(json.toString + "\n")
+        }
+      }
+      Thread.sleep(Random.nextInt(5000) + 5000)
+      for (i <- ids/4 to ids/2) {
+        val json: Json = MsgFactory(i).asJson
+        try {
+          fws(i).write(json.toString + "\n")
+        }
+      }
+      Thread.sleep(Random.nextInt(5000) + 5000)
+      for (i <- ids/2 to ids) {
         val json: Json = MsgFactory(i).asJson
         try {
           fws(i).write(json.toString + "\n")
