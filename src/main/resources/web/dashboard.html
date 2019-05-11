@@ -44,7 +44,10 @@
             console.log(trueJson)
             list4Chart = new Array()
             labels = []
-            temps = []
+            tempsOK = []
+            tempsERROR = []
+            tempsHOT = []
+            tempsCOLD = []
 
             for (var i = 0; i < trueJson.tab.length; i++) {
                 var array = trueJson.tab[i];
@@ -55,16 +58,45 @@
                 var tdTemp = document.createElement("td");
                 var tdGeoPos = document.createElement("td");
 
+                //Create row for tables
                 tdDroneId.appendChild(document.createTextNode(array.droneId));
                 tdMessage.appendChild(document.createTextNode(array.msgType));
                 tdTime.appendChild(document.createTextNode(array.time));
                 tdTemp.appendChild(document.createTextNode(array.temp));
                 tdGeoPos.appendChild(document.createTextNode(array.geoPos.x + ', ' + array.geoPos.y + ', ' + array.geoPos.alt));
 
+
+                //Create data for chart
                 list4Chart[i] = {};
                 list4Chart[i]['labels'] = new Date(array.time.substring(0, 22));
-                list4Chart[i]['temps'] = array.temp;
+                if (array.msgType.substring(0,2) == "OK") {
+                    list4Chart[i]['tempsOK'] = array.temp;
+                    list4Chart[i]['tempsERROR'] = NaN;
+                    list4Chart[i]['tempsHOT'] = NaN;
+                    list4Chart[i]['tempsCOLD'] = NaN;
+                }
+                else if (array.msgType.substring(0,5) == "ERROR") {
+                    list4Chart[i]['tempsOK'] = NaN;
+                    list4Chart[i]['tempsERROR'] = array.temp;
+                    list4Chart[i]['tempsHOT'] = NaN;
+                    list4Chart[i]['tempsCOLD'] = NaN;
+                }
+                else if (array.msgType.substring(0,3) == "HOT") {
+                    list4Chart[i]['tempsOK'] = NaN;
+                    list4Chart[i]['tempsERROR'] = NaN;
+                    list4Chart[i]['tempsHOT'] = array.temp;
+                    list4Chart[i]['tempsCOLD'] = NaN;
+                }
+                else if (array.msgType.substring(0,4) == "COLD") {
+                    list4Chart[i]['tempsOK'] = NaN;
+                    list4Chart[i]['tempsERROR'] = NaN;
+                    list4Chart[i]['tempsHOT'] = NaN;
+                    list4Chart[i]['tempsCOLD'] = array.temp;
+                }
 
+
+
+                //Adding in tables
                 tr.appendChild(tdDroneId);
                 tr.appendChild(tdMessage);
                 tr.appendChild(tdTime);
@@ -85,24 +117,53 @@
 
             for (var j = 0; j < list4Chart.length; j++) {
                 labels.push(list4Chart[j]['labels'])
-                temps.push(list4Chart[j]['temps'])
+                tempsOK.push(list4Chart[j]['tempsOK'])
+                tempsERROR.push(list4Chart[j]['tempsERROR'])
+                tempsHOT.push(list4Chart[j]['tempsHOT'])
+                tempsCOLD.push(list4Chart[j]['tempsCOLD'])
             }
 
+            console.log(tempsOK);
+            console.log(tempsERROR);
+            console.log(tempsHOT);
+            console.log(tempsCOLD);
             var ctx = document.getElementById("myChart");
             var myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                   labels: labels,
                   datasets: [{
-                    data: temps,
+                    data: tempsOK,
                     lineTension: 0,
                     backgroundColor: 'transparent',
-                    borderColor: '#007bff',
+                    borderColor: '#00ff00',
                     borderWidth: 4,
-                    pointBackgroundColor: '#007bff'
+                    pointBackgroundColor: '#00ff00'
+                  },{
+                    data: tempsERROR,
+                    lineTension: 0,
+                    backgroundColor: 'transparent',
+                    borderColor: '#ff0000',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#ff0000'
+                  },{
+                    data: tempsHOT,
+                    lineTension: 0,
+                    backgroundColor: 'transparent',
+                    borderColor: '#ffff00',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#ffff00'
+                  },{
+                    data: tempsCOLD,
+                    lineTension: 0,
+                    backgroundColor: 'transparent',
+                    borderColor: '#0000ff',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#0000ff'
                   }]
                 },
                 options: {
+                  spanGaps : true,
                   scales: {
                     yAxes: [{
                       ticks: {
