@@ -32,7 +32,7 @@ object DroneDataGenerator {
     def generateData(idMessage: Int = 1): Unit = {
       val json : Json = MsgFactory(id).asJson
 
-      val fw = new FileWriter("json_Drone" + args(0) + ".json", true)
+      val fw = new FileWriter("db/drones-json-data/json_Drone" + args(0) + ".json", true)
       try {
       fw.write(json.toString + "\n")
       }
