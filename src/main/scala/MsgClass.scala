@@ -40,7 +40,7 @@ object MsgClass extends App {
                   msgType: String,
                   temp: Float,
                   time: String,
-               // battery: Int
+                  // battery: Int
                   geoPos: GeoPos
                 )
 
@@ -51,18 +51,38 @@ object MsgClass extends App {
     */
   def MsgFactory: Msg = {
     val randIdMax = 1000000
-    val randIdMsg = 1000000
     val randTempD = 5
     val randTempH = 130
     val randGeo = 100000
-    Msg(
-      Random.nextInt(randIdMax),
-      "'Error'",
-      (Random.nextInt(randTempH) + randTempD).toFloat,
-      "'" + Timestamp.from(Instant.now).toString + "'",
-      GeoPos(Random.nextInt(randGeo),
-        Random.nextInt(randGeo),
-        Random.nextInt(randGeo)))
+    val drone_id = Random.nextInt(randIdMax)
+    val drone_heat = (Random.nextInt(randTempH) + randTempD).toFloat
+    if (drone_heat > 50)
+      Msg(
+        drone_id,
+        "'HOT'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(randGeo)))
+    else if (drone_heat < 10)
+      Msg(
+        drone_id,
+        "'COLD'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(randGeo)))
+    else
+      Msg(
+        drone_id,
+        "'OK'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(randGeo)))
   }
 
   /**
