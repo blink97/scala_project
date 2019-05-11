@@ -85,6 +85,47 @@ object MsgClass extends App {
   }
 
   /**
+    * Give random message
+    *
+    * @return Msg
+    */
+  def MsgFactory: Msg = {
+    val randIdMax = 1000000
+    val randTempD = 5
+    val randTempH = 130
+    val randGeo = 100000
+    val drone_id = Random.nextInt(randIdMax)
+    val drone_heat = (Random.nextInt(randTempH) + randTempD).toFloat
+    if (drone_heat > 50)
+      Msg(
+        drone_id,
+        "'HOT'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(4000)))
+    else if (drone_heat < 10)
+      Msg(
+        drone_id,
+        "'COLD'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(4000)))
+    else
+      Msg(
+        drone_id,
+        "'OK'",
+        drone_heat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo),
+          Random.nextInt(randGeo),
+          Random.nextInt(4000)))
+  }
+
+  /**
     * Used in MsgEncodeJson
     *
     * @return EncodeJson[GeoPos]
