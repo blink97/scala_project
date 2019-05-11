@@ -57,6 +57,8 @@ sbt "runMain Client"
 
 * Table **msg** (all fields not null)
 
+Contains all messages of the database
+
 | col | type       |
 |-----|------------|
 | id  | SERIAL     |
@@ -67,6 +69,19 @@ sbt "runMain Client"
 | x | INT |
 | y | INT |
 | alt | INT |
+
+* Table **drone** : last drone status
+
+| col | type       |
+|-----|------------|
+| drone_id | INT |
+| last_msg | CHAR(32) |
+| last_temp | REAL (aka float) |
+| last_time | TIMESTAMP (as CHAR(32)) |
+| last_x | INT |
+| last_y | INT |
+| last_alt | INT |
+
 
 ## Msg Status
 
