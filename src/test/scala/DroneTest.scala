@@ -1,3 +1,4 @@
+/*
 import Client.Drone
 import org.scalatest.{FunSuite, run}
 import MsgClass.{GeoPos, Msg, MsgFactory}
@@ -40,3 +41,4 @@ object DroneTest extends App {
 
   run(new Test)
 }
+*/
