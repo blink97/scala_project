@@ -90,7 +90,6 @@ object WebServer {
                   complete(
                     HttpEntity(ContentTypes.`application/json`,
                       resultSet.toStream.map(rs => Msg(rs.getInt("drone_id"),
-                        rs.getInt("msg_id"),
                         rs.getString("msg_type"),
                         rs.getFloat("temp"),
                         rs.getString("time"),

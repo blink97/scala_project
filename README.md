@@ -48,7 +48,6 @@ scalaproject=> \d
 | col | type       |
 |-----|------------|
 | id  | SERIAL     |
-| msg_id | INT |
 | drone_id | INT |
 | msg_type | CHAR(64) |
 | temp | REAL (aka float) |

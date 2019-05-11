@@ -34,7 +34,6 @@ object MsgClass extends App {
     */
   case class Msg(
                   droneId: Int,
-                  msgId: Int,
                   msgType: String,
                   temp: Float,
                   time: String,
@@ -55,7 +54,6 @@ object MsgClass extends App {
     val randGeo = 100000
     Msg(
       Random.nextInt(randIdMax),
-      Random.nextInt(randIdMsg),
       "'Error'",
       (Random.nextInt(randTempH) + randTempD).toFloat,
       "'" + Timestamp.from(Instant.now).toString + "'",
@@ -87,7 +85,6 @@ object MsgClass extends App {
   implicit def MsgEncodeJson: EncodeJson[Msg] = {
     EncodeJson((m: Msg) =>
       ("droneId" := m.droneId)
-        ->: ("msgId" := m.msgId)
         ->: ("msgType" := m.msgType)
         ->: ("temp" := m.temp)
         ->: ("time" := m.time)
@@ -117,16 +114,15 @@ object MsgClass extends App {
   implicit def MsgDecodeJson: DecodeJson[Msg] = {
     DecodeJson(m => for {
       droneId <- (m --\ "droneId").as[Int]
-      msgId <- (m --\ "msgId").as[Int]
       msgType <- (m --\ "msgType").as[String]
       temp <- (m --\ "temp").as[Float]
       time <- (m --\ "time").as[String]
       geoPos <- (m --\ "geoPos").as[GeoPos]
-    } yield Msg(droneId, msgId, msgType, temp, time, geoPos))
+    } yield Msg(droneId, msgType, temp, time, geoPos))
   }
 
   // Test
-  val kJson = Msg(1, 1, "Error", 23.6f, "'2007-01-01 00:00:00.00'", GeoPos(34243, 23224, 232))
+  val kJson = Msg(1, "Error", 23.6f, "'2007-01-01 00:00:00.00'", GeoPos(34243, 23224, 232))
   println(kJson)
   println(kJson.asJson)
   val jsonK = kJson.asJson

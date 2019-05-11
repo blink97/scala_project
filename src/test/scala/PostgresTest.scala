@@ -33,12 +33,12 @@ object PostgresTest extends App {
     insertDB(conn, geoPosTable, geoPosCol, List("1", "1", "1", "1", "2019-04-11 14:37:56.498443'"))
     */
 
-    insertMsg(conn, new Msg(78, 34, "'Error'", 23.6f, "'2007-02-02 00:00:00.00'", GeoPos(34243, 23224, 232)))
-    insertMsg(conn, new Msg(6, 1, "'START'", 16.5f, "'2019-04-11 14:37:56.498443'", GeoPos(32222, 324, 100)))
-    insertMsg(conn, new Msg(1, 1, "'START'", 23.6f, "'2007-01-01 00:00:00.00'", GeoPos(34243, 3224, 232)))
-    insertMsg(conn, new Msg(2, 1, "'START'", 23.6f, "'2008-01-01 00:00:00.00'", GeoPos(363, 324, 232)))
-    insertMsg(conn, new Msg(3, 1, "'START'", 23.6f, "'2009-01-01 00:00:00.00'", GeoPos(73, 624, 232)))
-    insertMsg(conn, new Msg(6, 1, "'START'", 16.5f, "'2019-04-11 14:37:56.498443'", GeoPos(32222, 324, 100)))
+    insertMsg(conn, new Msg(78, "'Error'", 23.6f, "'2007-02-02 00:00:00.00'", GeoPos(34243, 23224, 232)))
+    insertMsg(conn, new Msg(6, "'START'", 16.5f, "'2019-04-11 14:37:56.498443'", GeoPos(32222, 324, 100)))
+    insertMsg(conn, new Msg(1, "'START'", 23.6f, "'2007-01-01 00:00:00.00'", GeoPos(34243, 3224, 232)))
+    insertMsg(conn, new Msg(2, "'START'", 23.6f, "'2008-01-01 00:00:00.00'", GeoPos(363, 324, 232)))
+    insertMsg(conn, new Msg(3, "'START'", 23.6f, "'2009-01-01 00:00:00.00'", GeoPos(73, 624, 232)))
+    insertMsg(conn, new Msg(6, "'START'", 16.5f, "'2019-04-11 14:37:56.498443'", GeoPos(32222, 324, 100)))
 
     insertMsg(conn, MsgClass.MsgFactory)
 

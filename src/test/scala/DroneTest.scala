@@ -1,3 +1,4 @@
+import Client.Drone
 import org.scalatest.{FunSuite, run}
 
 

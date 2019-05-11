@@ -19,8 +19,8 @@ object PostgresFunctions extends App {
   }
 
   def insertMsg(conn: Connection, msg: Msg): Unit = {
-    val msgCol = List("MSG_ID", "DRONE_ID", "MSG_TYPE", "TEMP", "TIME", "X", "Y", "ALT")
-    val args = List(msg.msgId, msg.droneId, msg.msgType, msg.temp, msg.time, msg.geoPos.x, msg.geoPos.y, msg.geoPos.alt)
+    val msgCol = List("DRONE_ID", "MSG_TYPE", "TEMP", "TIME", "X", "Y", "ALT")
+    val args = List(msg.droneId, msg.msgType, msg.temp, msg.time, msg.geoPos.x, msg.geoPos.y, msg.geoPos.alt)
       .map(x => x.toString)
     val stt = s"INSERT INTO msg (${msgCol.mkString(",")}) VALUES (${args.mkString(",")})"
     val prepare_statement_add_column = conn.prepareStatement(stt)
@@ -62,7 +62,7 @@ object PostgresFunctions extends App {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
     resultSet.toStream.map(rs => rs.getString("id") + " "
-      + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
+      + rs.getString("drone_id") + " "
       + rs.getString("temp") + " " + rs.getString("time") + " " +
       rs.getString("msg_type") + "\n").mkString("")
   }
@@ -82,7 +82,6 @@ object PostgresFunctions extends App {
       _.next()
     }.map { rs =>
       Msg(rs.getInt("drone_id"),
-        rs.getInt("msg_id"),
         rs.getString("msg_type"),
         rs.getFloat("temp"),
         rs.getString("time"),
@@ -94,40 +93,17 @@ object PostgresFunctions extends App {
       .mkString("\n")
   }
 
-  /*
-  def getDBGeoPos(conn: Connection) = {
-    val statement = conn.createStatement()
-    val resultSet = statement.executeQuery(s"SELECT * FROM geopos")
-    resultSet.toStream.map(rs => rs.getString("id") + " "
-      + rs.getString("x") + " "
-      + rs.getString("y") + " " + rs.getString("alt") + " " +
-      rs.getString("time") + "\n").mkString("")
-  }
-  */
-
   def lookDBMsg(conn: Connection): Unit = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
     println("id msg drone temp time MSG")
     println(resultSet.toStream.map(rs => rs.getString("id") + " "
-      + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
+      + rs.getString("drone_id") + " "
       + rs.getString("temp") + " " + rs.getString("time") + " "
       + rs.getString("x") + " "
       + rs.getString("y") + " " + rs.getString("alt") +
       rs.getString("msg_type") + "\n").mkString(""))
 
   }
-
-  /*
-  def lookDBGeoPos(conn: Connection): Unit = {
-    val statement = conn.createStatement()
-    val resultSet = statement.executeQuery(s"SELECT * FROM geopos")
-    println("   id msg  x  y  alt  time")
-    println(resultSet.toStream.map(rs => rs.getString("id") + " "
-      + rs.getString("msg_id") + " " + rs.getString("x") + " "
-      + rs.getString("y") + " " + rs.getString("alt") + " " +
-      rs.getString("time") + "\n").mkString(""))
-  }
-  */
 
 }

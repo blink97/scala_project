@@ -22,10 +22,9 @@ object Client {
 
   class Drone(drone_id: Int) {
 
-    val id : Int = drone_id
-    var message_id : Int = 0 // TODO : var
+    val id: Int = drone_id
 
-    val root : String = "http://localhost:8080/"
+    val root: String = "http://localhost:8080/"
 
     implicit val system: ActorSystem = ActorSystem()
     implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -36,22 +35,22 @@ object Client {
       *
       * @return almost random Msg
       */
-    def generateMsg() : Json = {
+    def generateMsg(): Json = {
 
       val randTempD = 5
       val randTempH = 130
       val randGeo = 100000
 
-      val msg = Msg(id, message_id,
-        "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat, "'" + Timestamp.from(Instant.now).toString + "'",
-        GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo), Random.nextInt(randGeo)))  
-
-      message_id += 1 // TODO : var
+      val msg = Msg(id,
+        "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat,
+        "'" + Timestamp.from(Instant.now).toString + "'",
+        GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo),
+          Random.nextInt(randGeo)))
 
       msg.asJson
     }
 
-    def postJson(json : Json = generateMsg()) : Unit = {
+    def postJson(json: Json = generateMsg()): Unit = {
 
       //val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg/" + id, entity = ByteString(json.toString())))
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg", entity = ByteString(json.toString())))
@@ -59,20 +58,20 @@ object Client {
       responseFuture
         .onComplete {
           case Success(res) => println(res)
-          case Failure(_)   => sys.error("something wrong")
+          case Failure(_) => sys.error("something wrong")
         }
     }
 
 
-    def sendNewData() : Unit = {
+    def sendNewData(): Unit = {
       val path = "testJson.json"
 
       val res: Iterator[Either[String, Json]] = getJSONbyMapLines(getFileLines(path))
 
       res.foreach(x => x match {
-      case Right(s) => postJson(s)
-    })
-    
+        case Right(s) => postJson(s)
+      })
+
     }
   }
 
@@ -81,9 +80,9 @@ object Client {
     val nb_messages = 100
 
 
-    def generateDrones(id : Int = 0) : Unit = {
+    def generateDrones(id: Int = 0): Unit = {
 
-      val drone : Drone = new Drone(id)
+      val drone: Drone = new Drone(id)
       calls(drone)
 
       if (id <= nb_drones)
@@ -91,7 +90,7 @@ object Client {
     }
 
 
-    def calls(drone: Drone, idMessage : Int = 1) : Unit = {
+    def calls(drone: Drone, idMessage: Int = 1): Unit = {
 
       println("Drone :" + drone.id + " sending message:" + idMessage)
 
@@ -105,5 +104,5 @@ object Client {
 
     generateDrones()
   }
-  
+
 }
