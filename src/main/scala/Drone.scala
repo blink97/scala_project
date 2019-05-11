@@ -65,16 +65,17 @@ object Client {
     }
   }
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]) = {
     
     // TODO: Error message if args(0) is empty
 
     val drone: Drone = new Drone(args(0).toInt)
 
     drone.sendNewData("db/drones-json-data/json_Drone" + args(0) + ".json")
-
-    println("Done.")
-    System.exit(0)
+    try {
+      println("Done.")
+      System.exit(1)
+    }
   }
 
 }
