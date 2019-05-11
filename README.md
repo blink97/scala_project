@@ -68,6 +68,16 @@ sbt "runMain Client"
 | y | INT |
 | alt | INT |
 
+## Msg Status
+
+| Msg CODE | Desc. |
+|----------|-------|
+| OK       | Everything is fine |
+| HOT      | Drone is too hot |
+| COLD     | Drone is to cold |
+| ERROR    | Any internal problem |
+| BATTERY  | Drone alert because of a low battery level |
+
 ## SBT Usage
 
 ### Start 
