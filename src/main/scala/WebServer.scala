@@ -14,11 +14,15 @@ import scala.io.StdIn
 
 object WebServer {
 
+  /**
+    * WebServer function
+    * Enable endpoints to get frontend visualisation
+    * Enable endpoints interactions with the database
+    * @param args None required
+    */
   def main(args: Array[String]) {
 
     val conn = PostgresFunctions.initServer()
-    val idMin = 0
-    val idMax = 1000
 
     implicit val system: ActorSystem = ActorSystem("my-system")
     implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -96,12 +100,6 @@ object WebServer {
                         GeoPos(rs.getInt("x"), rs.getInt("y"), rs.getInt("alt"))).asJson)
                         .mkString("\n")
                     )
-                    /*
-                    res.map(rs => rs.getString("id") + " "
-                      + rs.getString("msg_id") + " " + rs.getString("drone_id") + " "
-                      + rs.getString("temp") + " " + rs.getString("temp") + " " +
-                      rs.getString("msg_type") + "\n").mkString(""))
-                      */
                   )
                 }
               }

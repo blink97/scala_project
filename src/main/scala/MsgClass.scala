@@ -5,6 +5,9 @@ import scala.util.Random
 import java.time.Instant
 import java.sql.Timestamp
 
+/**
+  * Drone Messages Class
+  */
 object MsgClass extends App {
 
   val randIdMax = 1000000
@@ -120,15 +123,5 @@ object MsgClass extends App {
       geoPos <- (m --\ "geoPos").as[GeoPos]
     } yield Msg(droneId, msgType, temp, time, geoPos))
   }
-
-  // Test
-  val kJson = Msg(1, "Error", 23.6f, "'2007-01-01 00:00:00.00'", GeoPos(34243, 23224, 232))
-  println(kJson)
-  println(kJson.asJson)
-  val jsonK = kJson.asJson
-  println(jsonK)
-  println(jsonK.as[Msg])
-  val msg = jsonK.as[Msg]
-  println("Test : ", msg.getOr() == kJson)
 
 }

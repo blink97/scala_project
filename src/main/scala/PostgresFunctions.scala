@@ -5,19 +5,28 @@ import MsgClass.{GeoPos, Msg}
 import java.sql.ResultSet
 import Implicits._
 
+/**
+  * PostgresFunctions contain all usable fonctions for the PostgreSQL database
+  */
 object PostgresFunctions extends App {
-  val msgTable = "msg"
-  val geoPosTable = "geopos"
-  val msgCol = List("MSG_ID", "DRONE_ID", "MSG_TYPE", "TEMP", "TIME")
-  val geoPosCol = List("X", "Y", "ALT", "TIME")
 
+  /**
+    * Connect to the Database
+    * @return a Connection
+    */
   def initServer(): Connection = {
     // DriverManager.register(new Nothing)
     classOf[org.postgresql.Driver]
-    // Make the connection
+    // Make the connection : use the user scala and password 42scala
     DriverManager.getConnection("jdbc:postgresql://localhost:5432/scalaproject", "scala", "42scala")
   }
 
+  /**
+    * Insert a Msg in the database, will add a row in msg table
+    * And update drone table
+    * @param conn The Database Connection Object
+    * @param msg The Msg Object
+    */
   def insertMsg(conn: Connection, msg: Msg): Unit = {
     val msgCol = List("DRONE_ID", "MSG_TYPE", "TEMP", "TIME", "X", "Y", "ALT")
     val args = List(msg.droneId, msg.msgType, msg.temp, msg.time, msg.geoPos.x, msg.geoPos.y, msg.geoPos.alt)
@@ -39,6 +48,13 @@ object PostgresFunctions extends App {
   }
   */
 
+  /**
+    * General insertion in Database
+    * @param conn the Database Connection Object
+    * @param table the Table in for insertion
+    * @param col Columns list for the query building
+    * @param values Values for each Columns in the query
+    */
   def insertDB(conn: Connection, table: String, col: List[String], values: List[String]): Unit = {
     val stt = s"INSERT INTO $table (${col.mkString(",")}) VALUES (${values.mkString(",")})"
     val prepare_statement_add_column = conn.prepareStatement(stt)
@@ -46,11 +62,25 @@ object PostgresFunctions extends App {
     prepare_statement_add_column.close()
   }
 
+  /**
+    * Execute a Query
+    *
+    * @param conn the Database Connection Object
+    * @param query SQL query, watch out for sql injections
+    * @return
+    */
   def deleteDBQuery(conn: Connection, query: String) = {
     val statement = conn.createStatement()
     statement.executeQuery(query)
   }
 
+  /**
+    * Execute a Query
+    *
+    * @param conn the Database Connection Object
+    * @param query SQL query, watch out for sql injections
+    * @return ResultSet Streamed
+    */
   def anyDBQuery(conn: Connection, query: String): Stream[ResultSet] = {
     val statement = conn.createStatement()
     // println(query)
@@ -58,6 +88,11 @@ object PostgresFunctions extends App {
     resultSet.toStream
   }
 
+  /**
+    * Get Msg row from database (DEBUG use)
+    * @param conn the database connection
+    * @return
+    */
   def getDBMsg(conn: Connection): String = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")
@@ -73,6 +108,14 @@ object PostgresFunctions extends App {
     s.mkString("\n")
   }
 
+  /**
+    * Get all msg rows from msg table,
+    * Convert them to Msg Object,
+    * Convert them to JSON argonaut,
+    * Convert it to a big string with all the jsons concatenated
+    * @param conn the database Connection Object
+    * @return string of Jsons of Msg Objects
+    */
   def getDBMsgJson(conn: Connection): String = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg;")
@@ -93,6 +136,11 @@ object PostgresFunctions extends App {
       .mkString("\n")
   }
 
+  /**
+    * Get Msg rows from database (DEBUG use)
+    * @param conn the database connection
+    * @return
+    */
   def lookDBMsg(conn: Connection): Unit = {
     val statement = conn.createStatement()
     val resultSet = statement.executeQuery(s"SELECT * FROM msg")

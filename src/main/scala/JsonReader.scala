@@ -7,6 +7,9 @@ import argonaut.{CodecJson, Json, Parse}
 import scala.io.Source
 import java.io.File
 
+/**
+  * JsonReader using Argonaut JSON library
+  */
 object JsonReader extends App {
 
   /**
