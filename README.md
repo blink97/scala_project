@@ -21,11 +21,25 @@ scalaproject=> \d
 (4 rows)
 ```
 
+## Compile Sources
+
+Before running executables, build them with: `sbt compile` in the project directory
+
+
 ## Start WebServer
 
+```bash
+sbt "runMain WebServer"
+```
+
+Look for [http://localhost:8080/](http://localhost:8080/) to see the frontend visualisation website.
 
 ## Start Drones
 
+
+```bash
+sbt "runMain Client"
+```
 
 ## Web Endpoints
 
@@ -37,8 +51,6 @@ scalaproject=> \d
 | GET    | /msg/drone/{id} | json array of msg objects | Give all messages of a drone |
 | GET | /msg/removedronemsg/{id} | na | Remove all messages of the {id} drone |
 | DELETE | /msg/removedronemsg/{id} | na | Remove all messages of the {id} drone |
-
-* TODO finish list
 
 
 ## DataBase
@@ -88,4 +100,8 @@ sbt package
 ```
 
 * clean
+
+```sh
+sbt clean
+```
 
