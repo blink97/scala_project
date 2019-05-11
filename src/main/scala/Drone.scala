@@ -39,7 +39,7 @@ object Client {
     def postJson(json: Json): Unit = {
 
       // In order to slow down the process so the server doesn't crash
-      Thread.sleep(Random.nextInt(200) + 100)
+      Thread.sleep(Random.nextInt(200) + 50)
 
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg", entity = ByteString(json.toString())))
 
