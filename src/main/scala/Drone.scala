@@ -72,7 +72,7 @@ object Client {
 
     val drone: Drone = new Drone(args(0).toInt)
 
-    drone.sendNewData("json_Drone" + args(0) + ".json")
+    drone.sendNewData("db/drones-json-data/json_Drone" + args(0) + ".json")
 
   }
 

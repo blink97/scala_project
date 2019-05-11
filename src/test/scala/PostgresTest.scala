@@ -1,7 +1,6 @@
 import java.sql.Connection
 import java.time.Instant
 import java.sql.Timestamp
-
 import MsgClass.{GeoPos, Msg}
 import PostgresFunctions._
 import org.scalatest.{FunSuite, run}
