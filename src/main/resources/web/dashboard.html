@@ -134,6 +134,7 @@
                   labels: labels,
                   datasets: [{
                     data: tempsOK,
+                    label: 'OK',
                     lineTension: 0,
                     backgroundColor: 'transparent',
                     borderColor: '#00ff00',
@@ -141,6 +142,7 @@
                     pointBackgroundColor: '#00ff00'
                   },{
                     data: tempsERROR,
+                    label: 'ERROR',
                     lineTension: 0,
                     backgroundColor: 'transparent',
                     borderColor: '#ff0000',
@@ -148,6 +150,7 @@
                     pointBackgroundColor: '#ff0000'
                   },{
                     data: tempsHOT,
+                    label: 'HOT',
                     lineTension: 0,
                     backgroundColor: 'transparent',
                     borderColor: '#ffa500',
@@ -155,6 +158,7 @@
                     pointBackgroundColor: '#ffa500'
                   },{
                     data: tempsCOLD,
+                    label: 'COLD',
                     lineTension: 0,
                     backgroundColor: 'transparent',
                     borderColor: '#0000ff',
@@ -180,7 +184,7 @@
                     }]
                   },
                   legend: {
-                    display: false,
+                    display: true,
                   }
                 }
               });
