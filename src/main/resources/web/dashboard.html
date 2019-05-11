@@ -48,6 +48,10 @@
             tempsERROR = []
             tempsHOT = []
             tempsCOLD = []
+            var cptOK = 0
+            var cptERROR = 0
+            var cptHOT = 0
+            var cptCOLD = 0
 
             for (var i = 0; i < trueJson.tab.length; i++) {
                 var array = trueJson.tab[i];
@@ -70,29 +74,21 @@
                 list4Chart[i] = {};
                 list4Chart[i]['labels'] = new Date(array.time.substring(0, 22));
                 if (array.msgType.substring(0,2) == "OK") {
-                    list4Chart[i]['tempsOK'] = array.temp;
-                    list4Chart[i]['tempsERROR'] = NaN;
-                    list4Chart[i]['tempsHOT'] = NaN;
-                    list4Chart[i]['tempsCOLD'] = NaN;
+                    cptOK += 1;
                 }
                 else if (array.msgType.substring(0,5) == "ERROR") {
-                    list4Chart[i]['tempsOK'] = NaN;
-                    list4Chart[i]['tempsERROR'] = array.temp;
-                    list4Chart[i]['tempsHOT'] = NaN;
-                    list4Chart[i]['tempsCOLD'] = NaN;
+                    cptERROR += 1;
                 }
                 else if (array.msgType.substring(0,3) == "HOT") {
-                    list4Chart[i]['tempsOK'] = NaN;
-                    list4Chart[i]['tempsERROR'] = NaN;
-                    list4Chart[i]['tempsHOT'] = array.temp;
-                    list4Chart[i]['tempsCOLD'] = NaN;
+                    cptHOT += 1;
                 }
                 else if (array.msgType.substring(0,4) == "COLD") {
-                    list4Chart[i]['tempsOK'] = NaN;
-                    list4Chart[i]['tempsERROR'] = NaN;
-                    list4Chart[i]['tempsHOT'] = NaN;
-                    list4Chart[i]['tempsCOLD'] = array.temp;
+                    cptCOLD += 2;
                 }
+                list4Chart[i]['tempsOK'] = cptOK;
+                list4Chart[i]['tempsERROR'] = cptERROR;
+                list4Chart[i]['tempsHOT'] = cptHOT;
+                list4Chart[i]['tempsCOLD'] = cptCOLD;
 
 
 
@@ -175,7 +171,7 @@
                       },
                       scaleLabel: {
                         display: true,
-                        labelString: 'Temperature'
+                        labelString: 'Nombre de messages'
                       }
                     }],
                     xAxes: [{
