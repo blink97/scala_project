@@ -8,7 +8,6 @@ import akka.http.scaladsl.model.HttpMethods._
 import akka.stream.ActorMaterializer
 import argonaut._
 import Argonaut._
-import WebClient.root
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.util.ByteString
@@ -32,31 +31,12 @@ object Client {
     implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
     /**
-      *
-      * @return almost random Msg
-      */
-    def generateMsg(): Json = {
-
-      val randTempD = 5
-      val randTempH = 130
-      val randGeo = 100000
-
-      val msg = Msg(id,
-        "'Error'", (Random.nextInt(randTempH) + randTempD).toFloat,
-        "'" + Timestamp.from(Instant.now).toString + "'",
-        GeoPos(Random.nextInt(randGeo), Random.nextInt(randGeo),
-          Random.nextInt(4000)))
-
-      msg.asJson
-    }
-
-    /**
     * postJson
     *
     * @param json - json to send to the server
     * Send the json to the server
     */
-    def postJson(json: Json = generateMsg()): Unit = {
+    def postJson(json: Json): Unit = {
 
       // In order to slow down the process so the server doesn't crash
       Thread.sleep(Random.nextInt(200) + 100)
@@ -92,39 +72,7 @@ object Client {
 
     val drone: Drone = new Drone(args(0).toInt)
 
-    drone.sendNewData("json_Drone" + args(0))
-    
-    /*
-    val nb_drones = 10
-    val nb_messages = 100
-
-
-    def generateDrones(id: Int = 0): Unit = {
-
-      val drone: Drone = new Drone(id)
-      calls(drone)
-
-      if (id <= nb_drones)
-        generateDrones(id + 1)
-    }
-    */
-
-    /*
-    def calls(drone: Drone, idMessage: Int = 1): Unit = {
-
-      println("Drone :" + drone.id + " sending message:" + idMessage)
-
-      drone.postJson()
-
-      Thread.sleep(500)
-
-      if (idMessage <= nb_messages)
-        calls(drone, idMessage + 1)
-    }
-
-
-    generateDrones()
-    */
+    drone.sendNewData("json_Drone" + args(0) + ".json")
 
   }
 
