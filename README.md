@@ -61,9 +61,9 @@ sbt "runMain Client"
 |-----|------------|
 | id  | SERIAL     |
 | drone_id | INT |
-| msg_type | CHAR(64) |
+| msg_type | CHAR(32) |
 | temp | REAL (aka float) |
-| time | TIMESTAMP (as CHAR(64)) |
+| time | TIMESTAMP (as CHAR(32)) |
 | x | INT |
 | y | INT |
 | alt | INT |
@@ -115,3 +115,6 @@ sbt package
 sbt clean
 ```
 
+# TODO
+
+* Add Battery status

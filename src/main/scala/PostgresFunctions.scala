@@ -12,6 +12,7 @@ object PostgresFunctions extends App {
 
   /**
     * Connect to the Database
+    *
     * @return a Connection
     */
   def initServer(): Connection = {
@@ -24,35 +25,46 @@ object PostgresFunctions extends App {
   /**
     * Insert a Msg in the database, will add a row in msg table
     * And update drone table
+    *
     * @param conn The Database Connection Object
-    * @param msg The Msg Object
+    * @param msg  The Msg Object
     */
   def insertMsg(conn: Connection, msg: Msg): Unit = {
     val msgCol = List("DRONE_ID", "MSG_TYPE", "TEMP", "TIME", "X", "Y", "ALT")
-    val args = List(msg.droneId, msg.msgType, msg.temp, msg.time, msg.geoPos.x, msg.geoPos.y, msg.geoPos.alt)
+    val args = List(msg.droneId, msg.msgType, msg.temp, msg.time,
+      msg.geoPos.x, msg.geoPos.y, msg.geoPos.alt)
       .map(x => x.toString)
     val stt = s"INSERT INTO msg (${msgCol.mkString(",")}) VALUES (${args.mkString(",")})"
     val prepare_statement_add_column = conn.prepareStatement(stt)
     prepare_statement_add_column.executeUpdate()
     prepare_statement_add_column.close()
+    insertDrone(conn, msg)
   }
 
-  /*
-  def insertGeoPos(conn: Connection, geo: GeoPos, id: Int, time: String): Unit = {
-    val geoPosCol = List("X", "Y", "ALT", "TIME")
-    val args = List(geo.x, geo.y, geo.alt, time).map(x => x.toString)
-    val stt = s"INSERT INTO geopos (${geoPosCol.mkString(",")}) VALUES (${args.mkString(",")})"
+  def insertDrone(conn: Connection, msg: Msg): Unit = {
+    val droneCols = List("DRONE_ID", "LAST_MSG", "LAST_TEMP", "LAST_TIME",
+      "LAST_X", "LAST_Y", "LAST_ALT")
+    val args = List(msg.droneId, msg.msgType, msg.temp, msg.time,
+      msg.geoPos.x, msg.geoPos.y, msg.geoPos.alt)
+      .map(x => x.toString)
+    val stt = s"INSERT INTO drone (${droneCols.mkString(",")}) VALUES (${args.mkString(",")})" +
+      s" ON CONFLICT (DRONE_ID) DO UPDATE SET LAST_MSG = excluded.LAST_MSG," +
+      s" LAST_TEMP = excluded.LAST_TEMP," +
+      s" LAST_TIME = excluded.LAST_TIME," +
+      s" LAST_X = excluded.LAST_X," +
+      s" LAST_Y = excluded.LAST_Y," +
+      s" LAST_ALT = excluded.LAST_ALT;"
     val prepare_statement_add_column = conn.prepareStatement(stt)
     prepare_statement_add_column.executeUpdate()
     prepare_statement_add_column.close()
   }
-  */
 
   /**
     * General insertion in Database
-    * @param conn the Database Connection Object
-    * @param table the Table in for insertion
-    * @param col Columns list for the query building
+    *
+    * @param conn   the Database Connection Object
+    * @param table  the Table in for insertion
+    * @param col    Columns list for the query building
     * @param values Values for each Columns in the query
     */
   def insertDB(conn: Connection, table: String, col: List[String], values: List[String]): Unit = {
@@ -65,7 +77,7 @@ object PostgresFunctions extends App {
   /**
     * Execute a Query
     *
-    * @param conn the Database Connection Object
+    * @param conn  the Database Connection Object
     * @param query SQL query, watch out for sql injections
     * @return
     */
@@ -77,7 +89,7 @@ object PostgresFunctions extends App {
   /**
     * Execute a Query
     *
-    * @param conn the Database Connection Object
+    * @param conn  the Database Connection Object
     * @param query SQL query, watch out for sql injections
     * @return ResultSet Streamed
     */
@@ -90,6 +102,7 @@ object PostgresFunctions extends App {
 
   /**
     * Get Msg row from database (DEBUG use)
+    *
     * @param conn the database connection
     * @return
     */
@@ -113,6 +126,7 @@ object PostgresFunctions extends App {
     * Convert them to Msg Object,
     * Convert them to JSON argonaut,
     * Convert it to a big string with all the jsons concatenated
+    *
     * @param conn the database Connection Object
     * @return string of Jsons of Msg Objects
     */
@@ -138,6 +152,7 @@ object PostgresFunctions extends App {
 
   /**
     * Get Msg rows from database (DEBUG use)
+    *
     * @param conn the database connection
     * @return
     */
