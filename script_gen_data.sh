@@ -1,12 +1,9 @@
 #!/bin/bash
 
-nb=50
-
 sbt clean compile
 
-sbt "runMain WebServer" &>/dev/null &
-
-for i in 1..nb
+for i in {1..50}
 do
-   sbt "runMain DroneDataGenerator $i" &>/dev/null
+  sbt "runMain DroneDataGenerator $i" &>/dev/null
+  echo "Gen Data Start for $i"
 done

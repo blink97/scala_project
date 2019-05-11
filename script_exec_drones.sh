@@ -1,14 +1,12 @@
 #!/bin/bash
 
-nb=50
-
-sbt clean compile 
+sbt clean compile
 
 echo "Starting drones"
 
-for i in 1..nb
+for i in {1..50}
 do
-   sbt "runMain Client $i" &
+   sbt "runMain Client $i"
 done
 
 echo "Done."
