@@ -6,7 +6,8 @@ echo "Starting drones"
 
 for i in {1..50}
 do
-   sbt "runMain Client $i"
+  echo "Exec Drone $i"
+  sbt "runMain Client $i"
 done
 
 echo "Done."

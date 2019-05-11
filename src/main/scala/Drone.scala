@@ -59,10 +59,9 @@ object Client {
     def sendNewData(path : String = "testJsonv3.json"): Unit = {
       val res: Iterator[Either[String, Json]] = getJSONbyMapLines(getFileLines(path))
 
-      res.foreach(x => x match {
+      res.foreach {
         case Right(s) => postJson(s)
-      })
-
+      }
     }
   }
 
@@ -74,6 +73,8 @@ object Client {
 
     drone.sendNewData("db/drones-json-data/json_Drone" + args(0) + ".json")
 
+    println("Done.")
+    System.exit(0)
   }
 
 }

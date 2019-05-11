@@ -35,12 +35,6 @@ sbt "runMain WebServer"
 Look for [http://localhost:8080/](http://localhost:8080/) to see the frontend visualisation website.
 
 
-## Generate Drone Data
-
-To generate the data for the drone with the id '1':
-```bash
-sbt "runMain DataDroneGenerator 1"
-```
 
 ## Start Drones
 
@@ -49,6 +43,13 @@ To start a drone with the id '1':
 sbt "runMain Client 1"
 ```
 A drone needs its data in order to work well, see part **Generate drone data**
+
+## Generate Drone Data
+
+To generate the data for the drone with the id '1':
+```bash
+sbt "runMain DataDroneGenerator 1"
+```
 
 
 ## Web Endpoints
