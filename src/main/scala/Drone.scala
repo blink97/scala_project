@@ -52,7 +52,9 @@ object Client {
 
     def postJson(json: Json = generateMsg()): Unit = {
 
-      //val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg/" + id, entity = ByteString(json.toString())))
+      // In order to slow down the process so the server doesn't crash
+      Thread.sleep(Random.nextInt(200) + 100)
+      
       val responseFuture: Future[HttpResponse] = Http().singleRequest(HttpRequest(POST, uri = root + "msg", entity = ByteString(json.toString())))
 
       responseFuture
@@ -62,10 +64,8 @@ object Client {
         }
     }
 
-
-    def sendNewData(): Unit = {
-      val path = "testJson.json"
-
+    
+    def sendNewData(path : String = "testJsonv3.json"): Unit = {
       val res: Iterator[Either[String, Json]] = getJSONbyMapLines(getFileLines(path))
 
       res.foreach(x => x match {
@@ -83,13 +83,14 @@ object Client {
     def generateDrones(id: Int = 0): Unit = {
 
       val drone: Drone = new Drone(id)
-      calls(drone)
+      //calls(drone)
+      drone.sendNewData()
 
       if (id <= nb_drones)
         generateDrones(id + 1)
     }
 
-
+    /*
     def calls(drone: Drone, idMessage: Int = 1): Unit = {
 
       println("Drone :" + drone.id + " sending message:" + idMessage)
@@ -101,6 +102,7 @@ object Client {
       if (idMessage <= nb_messages)
         calls(drone, idMessage + 1)
     }
+    */
 
     generateDrones()
   }
