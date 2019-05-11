@@ -1,5 +1,6 @@
 import Client.Drone
 import org.scalatest.{FunSuite, run}
+import MsgClass.{GeoPos, Msg, MsgFactory}
 
 
 object DroneTest extends App {
@@ -25,7 +26,9 @@ object DroneTest extends App {
 
     def calls(drone: Drone, id : Int) : Unit = {
 
-      drone.postJson()
+      val json: Json = MsgFactory(drone.id).asJson
+
+      drone.postJson(json)
 
       if (id <= nb_messages)
         calls(drone, id - 1)
