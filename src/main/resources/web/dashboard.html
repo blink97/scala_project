@@ -99,9 +99,9 @@
                 //Create data for chart
                 list4Chart[i] = {};
                 list4Chart[i]['labels'] = new Date(array.time.substring(0, 22));
-                if (!labelsMinute.includes(array.time.substring(0,10))) {
-                    labelsMinute.push(array.time.substring(0,10));
-                    list4Chart[cptMinute]['labelsMinute'] = new Date(array.time.substring(0,10));
+                if (!labelsMinute.includes(array.time.substring(0,16))) {
+                    labelsMinute.push(array.time.substring(0,16));
+                    list4Chart[cptMinute]['labelsMinute'] = new Date(array.time.substring(0,16));
                     list4Chart[cptMinute]['tempsMinuteOK'] = 0
                     list4Chart[cptMinute]['tempsMinuteERROR'] = 0
                     list4Chart[cptMinute]['tempsMinuteHOT'] = 0
