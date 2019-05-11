@@ -20,8 +20,8 @@ object PostgresTest extends App {
     }
     val msgTable = "msg"
     val geoPosTable = "geopos"
-    val msgCol = List("MSG_ID", "DRONE_ID", "MSG_TYPE", "TEMP", "TIME")
-    val geoPosCol = List("MSG_ID", "X", "Y", "ALT", "TIME")
+    val msgCol = List("DRONE_ID", "MSG_TYPE", "TEMP", "TIME")
+    val geoPosCol = List("X", "Y", "ALT", "TIME")
 
     insertMsg(conn, MsgClass.MsgFactory)
     insertMsg(conn, MsgClass.MsgFactory)
