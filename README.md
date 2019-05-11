@@ -1,5 +1,15 @@
 # scala_project
 
+## Steps
+
+1. Start Database
+2. Start Web Server
+3. Execute `./script_exec_drones.sh`
+4. Check http://localhost:8080/
+5. Wait several minutes
+6. Check final results on http://localhost:8080/
+
+
 ## Start Database
 
 > WARNING! Require **postgresql**  (psql (PostgreSQL) 10.7 )
@@ -38,6 +48,15 @@ Look for [http://localhost:8080/](http://localhost:8080/) to see the frontend vi
 
 ## Start Drones
 
+Execute the bash script : **script_exec_drones.sh** : will run 50 drones over the data which is stored in db/drones-json-data
+which was already generated with DroneDataGenerator.
+
+```bash
+./script_exec_drones.sh 
+```
+
+### Single Drone Execution
+
 To start a drone with the id '1':
 ```bash
 sbt "runMain Client 1"
@@ -46,9 +65,9 @@ A drone needs its data in order to work well, see part **Generate drone data**
 
 ## Generate Drone Data
 
-To generate the data for the drone with the id '1':
+To generate the data for i drones starting at '1':
 ```bash
-sbt "runMain DataDroneGenerator 1"
+sbt "runMain DataDroneGenerator i"
 ```
 
 
