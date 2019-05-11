@@ -62,7 +62,7 @@
                 tdGeoPos.appendChild(document.createTextNode(array.geoPos.x + ', ' + array.geoPos.y + ', ' + array.geoPos.alt));
 
                 list4Chart[i] = {};
-                list4Chart[i]['labels'] = new Date(array.time.substring(0, 10));
+                list4Chart[i]['labels'] = new Date(array.time.substring(0, 22));
                 list4Chart[i]['temps'] = array.temp;
 
                 tr.appendChild(tdDroneId);
