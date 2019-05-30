@@ -29,16 +29,16 @@ Topic names : drones
 
 ### Spark Cluster
 
-Spark cluster on : *https://CLUSTERNAME.azurehdinsight.net/jupyter*
+* Spark cluster on : https://spark-realscala.azurehdinsight.net
 
-Upload file : 
+* Upload file : cloud/DronesSparkStreaming.ipynb
 
-DronesSparkStreaming.ipynb **Jupyter file but with scala code !**
+* DronesSparkStreaming.ipynb **Jupyter file but with scala code !**
 
 ### Kafka Cluster
 
-Kafka cluster on : *https://CLUSTERNAME.azurehdinsight.net/jupyter*
+* Kafka cluster on : https://kafka-realscala.azurehdinsight.net
 
-Upload file : 
+* Upload file : cloud/DronesKafkaStreaming.ipynb
 
-DronesKafkaStreaming.ipynb **Jupyter file but with scala code !**
+* DronesKafkaStreaming.ipynb **Jupyter file but with scala code !**
