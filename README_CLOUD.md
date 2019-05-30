@@ -11,10 +11,11 @@
 
 ## Cloud Architecture
 
-* Apache Kafka
-* Apache Spark
-* HDInsight
-* TODO Web App
+* Azure Resource Group (we named it RealScalaProject):
+  * Apache Kafka
+  * Apache Spark
+  * HDInsight
+  * TODO Web App
 
 
 ### Kafka
