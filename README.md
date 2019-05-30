@@ -1,5 +1,7 @@
 # scala_project
 
+> 2nd Version with [Spark/Kafka link here](README_CLOUD.md)
+
 ## Steps
 
 1. Start Database
