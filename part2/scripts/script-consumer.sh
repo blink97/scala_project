@@ -2,7 +2,7 @@
 
 TOPIC="msg"
 CONSUMER="drone.kafka.DroneConsumer"
-PROJECT_JAR="scala_part2.jar"
+PROJECT_JAR="scala_part2_2.12-0.1.jar"
 PORT=9092
 
 # Run Scala Consumer
