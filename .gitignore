@@ -1,3 +1,4 @@
+*scala_part*.jar
 *dist/*
 *target/
 *lib_managed/
@@ -13,3 +14,5 @@
 *.idea/
 *.zip
 *.tgz
+*project/
+
