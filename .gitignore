@@ -11,3 +11,5 @@
 *.class
 *.log
 *.idea/
+*.zip
+*.tgz

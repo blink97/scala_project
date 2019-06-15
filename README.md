@@ -1,9 +1,9 @@
 # Scala Project
 
-**Part1: ** Scala only project using akka-http, postgresql. Handle and display message
+**Part1:** Scala only project using akka-http, postgresql. Handle and display message
 data from many clients (drones).
 
-**Part2: ** Scala, Kafka, Spark. Handle many message from drones but using kafka/spark.
+**Part2:** Scala, Kafka, Spark. Handle many message from drones but using kafka/spark.
 
 ## Part 1
 
