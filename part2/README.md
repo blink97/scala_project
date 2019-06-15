@@ -1,7 +1,24 @@
 # ScalaProject : Part 2
 
-## Install
+## Install && Requirements
 
+#### Requirements
+
+* Scala 2.12.8
+* kafka-2.12-2.2.1
+* bash
+* Java 8
+
+#### Scripts Rights
+
+These scripts should have the execution rights :
+
+```
+master.sh
+scripts/script-zoo-kafka.sh
+scripts/script-consumer.sh
+scripts/script-producer.sh
+```
 
 ## Usage
 
@@ -16,34 +33,20 @@
 * Run zookeeper
 
 ```bash
-./script-zoo-kafka.sh
-```
-
-* Run Package sbt
-
-```bash
-./script-package.sh
+./scripts/script-zoo-kafka.sh
 ```
 
 * Run Producer
 
 ```bash
-./script-consumer.sh
+./scripts/script-consumer.sh
 ```
 
 * Run Consumer
 
 ```bash
-./script-producer.sh
+./scripts/script-producer.sh
 ```
-
-
-## Requirements
-
-* Scala 2.12.8
-* kafka-2.12-2.2.1
-* bash
-* Java 8
 
 ## Components
 
