@@ -2,15 +2,23 @@
 
 TIMING_BIG=30
 TIMING_SMALL=5
+SCRIPTS_DIR="scripts"
 
 # Automate Project run
 # Execute all projects script
-./script-zoo-kafka.sh
+
+# Package jar
+sbt compile package
+
+# zookeeper
+./$SCRIPTS_DIR/script-zoo-kafka.sh
 
 sleep $TIMING_BIG
 
-./script-producer.sh
+# Producer
+./$SCRIPTS_DIR/script-producer.sh
 
 sleep $TIMING_SMALL
 
-./script-consumer.sh
+# Consumer
+./$SCRIPTS_DIR/script-consumer.sh
