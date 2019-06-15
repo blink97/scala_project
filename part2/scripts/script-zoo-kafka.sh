@@ -1,4 +1,4 @@
-# !/bin/sh
+#!/bin/sh
 
 TIMING=5
 KAFKA_DIR="./kafka_2.12-2.2.1/"

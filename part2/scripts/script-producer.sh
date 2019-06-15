@@ -1,4 +1,4 @@
-# !/bin/sh
+#!/bin/sh
 
 TOPIC="msg"
 PRODUCER="drone.kafka.DroneProducer"

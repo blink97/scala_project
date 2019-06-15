@@ -1,4 +1,4 @@
-# !/bin/sh
+#!/bin/sh
 
 TOPIC="msg"
 CONSUMER="drone.kafka.DroneConsumer"
