@@ -50,5 +50,25 @@ scripts/script-producer.sh
 
 ## Components
 
+Hadoop ???
+
+SCALA
+
+```
+ ????
+  |
+  |
+Kafka
+  |
+  |
+  V
+SPARK
+  |
+  |
+  V
+FrontEnd/BAckend (Web Site)
+```
+
+
 
 
