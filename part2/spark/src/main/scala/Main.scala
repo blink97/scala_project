@@ -1,3 +1,4 @@
+import SparkConsumor._
 
 object SparkConsumor {
   def main(args: Array[String]): Unit = {
