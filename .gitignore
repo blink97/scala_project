@@ -15,4 +15,4 @@
 *.zip
 *.tgz
 *project/
-
+*logs*
