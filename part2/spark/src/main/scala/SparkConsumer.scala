@@ -5,6 +5,12 @@ import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DataTypes, StructType}
 
+object SparkConsumor {
+  def main(args: Array[String]): Unit = {
+    new SparkConsumor("localhost:9092").process()
+  }
+}
+
 class SparkConsumor(brokers: String) {
   def process(): Unit = {
     // Init SparkSession
