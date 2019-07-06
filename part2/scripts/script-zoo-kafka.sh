@@ -12,7 +12,7 @@ N_REPLICATION_FACTOR=1
 # Start Zookeeper
 echo -e "Start ZooKeeper with config at $ZOOKEEPER_CONFIG_FILE"
 
-if [ $1 == "yes" ]; then
+if [[ $1 == "yes" ]]; then
   ./$KAFKA_DIR/bin/zookeeper-server-start.sh $ZOOKEEPER_CONFIG_FILE &
 else
   ./$KAFKA_DIR/bin/zookeeper-server-start.sh $ZOOKEEPER_CONFIG_FILE 1>/dev/null  &
@@ -25,7 +25,7 @@ sleep $TIMING
 echo -e "Start Kafka with config at $KAFKA_CONFIG_FILE"
 
 
-if [ $1 == "yes" ]; then
+if [[ $1 == "yes" ]]; then
   ./$KAFKA_DIR/bin/kafka-server-start.sh $KAFKA_CONFIG_FILE &
 else
    ./$KAFKA_DIR/bin/kafka-server-start.sh $KAFKA_CONFIG_FILE 1>/dev/null &
@@ -36,7 +36,7 @@ sleep $TIMING
 
 
 # Create Topic
-if [ $1 == "yes" ]; then
+if [[ $1 == "yes" ]]; then
   ./$KAFKA_DIR/bin/kafka-topics.sh --create --zookeeper localhost:$PORT_1 \
     --replication-factor $N_REPLICATION_FACTOR --partitions $N_PARTITIONS --topic $TOPIC &
 else
