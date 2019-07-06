@@ -1,7 +1,20 @@
+import java.util.{Date, Properties}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import scala.util.Random
+import DroneMsg._
 
-class KafkaProducer {
-  val process(brokers: String): Unit = {
-    val props = Properties()
+object DroneMsgProducer {
+  def main(args: Array[String]): Unit = {
+    new DroneMsgProducer("localhost:9092").process()
+  }
+}
+
+
+class DroneMsgProducer(brokers: String) {
+  def process(): Unit = {
+    val topic = "msg"
+
+    val props = new Properties()
     // Props settings
     props.put("bootstrap.servers", brokers)
     props.put("client.id", "KafkaProducer")
@@ -11,8 +24,20 @@ class KafkaProducer {
     // ! Create Producer
     val producer = new KafkaProducer[String, String](props)
 
+    val msg = "{\"id\":\"1\",\"msg_id\":\"10\",\"timestamp\":\"'2019-05-11 17:05:45.484944'\"}"
 
-  }
+    val data = new ProducerRecord[String, String](topic, "1", msg)
+
+    // ! Send to Kafka
+    val futureResult = producer.send(data)
+
+    println("Send to kafka")
+
+    // Wait ackn
+    futureResult.get()
+
+    producer.close()
+  } 
 }
 
 /*
@@ -55,3 +80,4 @@ class KafkaProducer {
 
 
 }
+*/
