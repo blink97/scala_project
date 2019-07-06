@@ -1,4 +1,9 @@
-import spark.implicits._
+import java.time.{LocalDate, Period}
+
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.expressions.UserDefinedFunction
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{DataTypes, StructType}
 
 class SparkConsumor(brokers: String) {
   def process(): Unit = {
@@ -7,6 +12,9 @@ class SparkConsumor(brokers: String) {
       .appName("spark")
       .master("local[*]")
       .getOrCreate()
+
+
+    import spark.implicits._
 
     // ! Reading from Kafka
 
@@ -25,8 +33,6 @@ class SparkConsumor(brokers: String) {
       .outputMode("append")
       .format("console")
       .start()
-
-    consoleOutput.awaitTermination()
 
     // Select Data in Stream
     val dronesMsgDF = inputDF.selectExpr("CAST(value AS STRING)")
@@ -55,7 +61,22 @@ class SparkConsumor(brokers: String) {
     // ! Processing the DATA
 
 
-    // !
+    // ! Output : Result for web, or other
+
+    val resultDF = msgsFlatDF.select(
+      concat($"id", lit(" "), $"msg_id").as("key"),
+      msgsFlatDF.col("timestamp").cast(DataTypes.StringType).as("timestamp"))
+
+    val kafkaOutput = resultDF.writeStream
+      .format("kafka")
+      .option("kafka.boostrap.servers", brokers)
+      .option("topic", "res")
+      .option("checkpointLocation", "./spark/checkpoints")
+      .start()
+
+    // Must be after all queries
+    kafkaOutput.awaitTermination()
+    consoleOutput.awaitTermination()
 
   }
 }
