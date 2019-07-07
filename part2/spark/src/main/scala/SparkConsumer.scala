@@ -45,52 +45,20 @@ class SparkConsumor(brokers: String) {
 
     val nbReceivers = 1
 
-    /*
-    val kafkaProperties: Map[String, String] = 
-      Map("zookeeper.hosts" -> zkhost,
-          "zookeeper.port" -> zkports,
-          "kafka.topic" -> topic,
-          "zookeeper.consumer.connection" -> "localhost:2181",
-          "kafka.consumer.id" -> "kafka-consumer")
+    val kafkaParams = 
+      Map[String, Object](
+        "bootstrap.servers" -> "localhost:9092",
+        "key.deserializer" -> classOf[StringDeserializer],
+        "value.deserializer" -> classOf[StringDeserializer],
+        "group.id" -> "1",
+        )
 
-    val props = new java.util.Properties()
-    kafkaProperties foreach {case (key, value) => props.put(key, value)}
-    */
-   val kafkaParams = 
-     Map[String, Object](
-      "bootstrap.servers" -> "localhost:9092",
-      "key.deserializer" -> classOf[StringDeserializer],
-      "value.deserializer" -> classOf[StringDeserializer],
-      "group.id" -> "1",
+    val directKafkaStream = KafkaUtils
+      .createDirectStream[String, String](
+        ssc,
+        PreferConsistent,
+        Subscribe[String, String](topicsSet, kafkaParams)
       )
-/*
-    val props = new Properties()
-    props.put("bootstrap.servers", "localhost:9094")
-    props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-    props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-    props.put("auto.offset.reset", "latest")
-    props.put("group.id", "consumer-group")
-*/
-/*
-   val consumer : KafkaConsumer[String, String] = new KafkaConsumer[String, String](props)
-   consumer.subscribe(topics)
-   */
-   val directKafkaStream = KafkaUtils
-     .createDirectStream[String, String](
-       ssc,
-       PreferConsistent,
-       Subscribe[String, String](topicsSet, kafkaParams)
-     )
-
-    
-
-
-   /*
-    val tmp_stream = ReceiverLauncher.launch(ssc, props,
-      nbReceivers, StorageLevel.MEMORY_ONLY)
-
-    val partitionOffset_stream = ProcessedOffsetManager.getPartitionOffset(tmp_stream, props)
-   */
 
     // Start App
     directKafkaStream.foreachRDD(rdd => {
@@ -103,14 +71,9 @@ class SparkConsumor(brokers: String) {
         test.write.mode(SaveMode.Append).json("../stream")
         test.show()
       }
-      // directKafkaStream.map(record => println("\n\n " + record.key + " : " + record.value + "\n\n"))
     })
     // End App
 
-    // Create DStream
-    // val lines = ssc.socketTextStream("localhost", 9092)
-
-    // ProcessedOffsetManager.persists(partitionOffset_stream, props)
     ssc.start()
     ssc.awaitTermination()
 
@@ -131,76 +94,3 @@ object SQLContextSingleton {
   }
 }
 
-
-/* OLD CODE 
-    println("DDD")
-
-    import spark.implicits._
-
-    // ! Reading from Kafka
-
-    // Read kafka stream ; "drones" topic
-    val inputDF = spark.readStream
-      .format("kafka")
-      .option("kafka.bootstrap.servers", brokers)
-      .option("subscribe", "msg")
-      .load()
-
-    // Print Struct
-    inputDF.printSchema()
-
-    // Output check
-    val consoleOutput = inputDF.writeStream
-      .outputMode("append")
-      .format("console")
-      .start()
-
-    // Select Data in Stream
-    val dronesMsgDF = inputDF.selectExpr("CAST(value AS STRING)")
-
-    dronesMsgDF.printSchema()
-
-    // ! Convert the Data
-    
-    // Convert Streamed Data to Drone Msg, using this struct
-    val struct = new StructType()
-      .add("id", DataTypes.StringType)
-      .add("msg_id", DataTypes.StringType)
-      .add("timestamp", DataTypes.StringType)
-
-    val dronesMsgStructDF = dronesMsgDF.select(from_json($"value", struct).as("msg"))
-
-    dronesMsgStructDF.printSchema()
-    
-    // Flatten DF
-    val msgsFlatDF = dronesMsgStructDF.selectExpr("msg.id", "msg.msg_id", "msg.timestamp")
-
-    msgsFlatDF.printSchema()
-
-    // TypeConversions (if needed, dates, numbers)
-    // val msgDF = msgsFlatDF.withColumn("timestamp", to_timestamp($"timestamp", "yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
-    
-    // ! Processing the DATA
-
-
-    // ! Output : Result for web, or other
-
-    val resultDF = msgsFlatDF.select(
-      concat($"id", lit(" "), $"msg_id").as("key"),
-      msgsFlatDF.col("timestamp").cast(DataTypes.StringType).as("timestamp"))
-
-
-    val kafkaOutput = resultDF.writeStream
-      .format("kafka")
-      .option("kafka.boostrap.servers", brokers)
-      .option("topic", "res")
-      .option("checkpointLocation", "./spark/checkpoints")
-      .start()
-
-    // Must be after all queries
-    // kafkaOutput.awaitTermination()
-    // consoleOutput.awaitTermination()
-
-  }
-}
-*/
