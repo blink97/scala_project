@@ -20,6 +20,8 @@ class SparkConsumor(brokers: String) {
       .getOrCreate()
 
 
+    println("DDD")
+
     import spark.implicits._
 
     // ! Reading from Kafka
@@ -27,21 +29,25 @@ class SparkConsumor(brokers: String) {
     // Read kafka stream ; "drones" topic
     val inputDF = spark.readStream
       .format("kafka")
-      .option("kafka.boostrap.servers", brokers)
-      .option("subscribe", "drones")
+      .option("kafka.bootstrap.servers", brokers)
+      .option("subscribe", "msg")
       .load()
 
     // Print Struct
     inputDF.printSchema()
 
     // Output check
+    /*
     val consoleOutput = inputDF.writeStream
       .outputMode("append")
       .format("console")
       .start()
+    */
 
     // Select Data in Stream
     val dronesMsgDF = inputDF.selectExpr("CAST(value AS STRING)")
+
+    dronesMsgDF.printSchema()
 
     // ! Convert the Data
     
@@ -53,11 +59,10 @@ class SparkConsumor(brokers: String) {
 
     val dronesMsgStructDF = dronesMsgDF.select(from_json($"value", struct).as("msg"))
 
-    dronesMsgDF.printSchema()
-
-
+    dronesMsgStructDF.printSchema()
+    
     // Flatten DF
-    val msgsFlatDF = dronesMsgDF.selectExpr("msg.id", "msg.msg_id", "msg.timestamp")
+    val msgsFlatDF = dronesMsgStructDF.selectExpr("msg.id", "msg.msg_id", "msg.timestamp")
 
     msgsFlatDF.printSchema()
 
@@ -73,16 +78,17 @@ class SparkConsumor(brokers: String) {
       concat($"id", lit(" "), $"msg_id").as("key"),
       msgsFlatDF.col("timestamp").cast(DataTypes.StringType).as("timestamp"))
 
+    /*
     val kafkaOutput = resultDF.writeStream
       .format("kafka")
       .option("kafka.boostrap.servers", brokers)
       .option("topic", "res")
       .option("checkpointLocation", "./spark/checkpoints")
       .start()
-
+    */
     // Must be after all queries
-    kafkaOutput.awaitTermination()
-    consoleOutput.awaitTermination()
+    // kafkaOutput.awaitTermination()
+    // consoleOutput.awaitTermination()
 
   }
 }
