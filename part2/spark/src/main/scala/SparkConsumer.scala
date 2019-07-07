@@ -7,6 +7,9 @@ import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql._
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DataTypes, StructType}
 import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
@@ -15,6 +18,8 @@ import kafka.serializer.StringDecoder
 import kafka.serializer.DefaultDecoder
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.spark.sql.SQLContext
+
 
 object SparkConsumor {
   def main(args: Array[String]): Unit = {
@@ -29,7 +34,7 @@ class SparkConsumor(brokers: String) {
       .setAppName("spark")
       .setMaster("local[*]")
 
-    val ssc = new StreamingContext(conf, Seconds(5))
+    val ssc = new StreamingContext(conf, Seconds(25))
 
 
     val topic = "msg"
@@ -57,7 +62,6 @@ class SparkConsumor(brokers: String) {
       "key.deserializer" -> classOf[StringDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
       "group.id" -> "1",
-      "kafka.consumer.id" -> "kafka-consumer-01"
       )
 /*
     val props = new Properties()
@@ -91,8 +95,16 @@ class SparkConsumor(brokers: String) {
     // Start App
     directKafkaStream.foreachRDD(rdd => {
       println("\n\nNumber of records in this batch : " + rdd.count())
+      if (!rdd.isEmpty()) {
+        val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
+        import sqlContext.implicits._
+
+        val test = rdd.map(record => Rec(record.value)).toDF()
+        test.write.mode(SaveMode.Append).json("../stream")
+        test.show()
+      }
+      // directKafkaStream.map(record => println("\n\n " + record.key + " : " + record.value + "\n\n"))
     })
-    directKafkaStream.map(record => println("\n\n " + record.key + " : " + record.value + "\n\n"))
     // End App
 
     // Create DStream
@@ -102,6 +114,20 @@ class SparkConsumor(brokers: String) {
     ssc.start()
     ssc.awaitTermination()
 
+  }
+}
+
+
+case class Rec(msg: String)
+
+object SQLContextSingleton {
+  @transient private var instance: SQLContext = _
+
+  def getInstance(sparkContext: SparkContext) : SQLContext = {
+    if (instance == null) {
+      instance = new SQLContext(sparkContext)
+    }
+    instance
   }
 }
 
