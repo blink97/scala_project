@@ -34,8 +34,7 @@ class SparkConsumor(brokers: String) {
 
     val topic = "msg"
     val topics = Array("msg")
-    val topicSet = topic.toSet()
-
+    val topicsSet = topic.split(",").toSet
     val zkhost = "localhost"
     val zkports = "2181"
 
@@ -54,20 +53,32 @@ class SparkConsumor(brokers: String) {
     */
    val kafkaParams = 
      Map[String, Object](
-  "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
-  "key.deserializer" -> classOf[StringDeserializer],
-  "value.deserializer" -> classOf[StringDeserializer],
-  "group.id" -> "use_a_separate_group_id_for_each_stream",
-  "auto.offset.reset" -> "latest",
-  "enable.auto.commit" -> (false: java.lang.Boolean)
-  )
-
-
-
+      "bootstrap.servers" -> "localhost:9092",
+      "key.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[StringDeserializer],
+      "group.id" -> "1",
+      "kafka.consumer.id" -> "kafka-consumer-01"
+      )
+/*
+    val props = new Properties()
+    props.put("bootstrap.servers", "localhost:9094")
+    props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+    props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
+    props.put("auto.offset.reset", "latest")
+    props.put("group.id", "consumer-group")
+*/
+/*
+   val consumer : KafkaConsumer[String, String] = new KafkaConsumer[String, String](props)
+   consumer.subscribe(topics)
+   */
    val directKafkaStream = KafkaUtils
      .createDirectStream[String, String](
-       ssc, PreferConsistent, Subscribe[String, String](topics, kafkaParams)
+       ssc,
+       PreferConsistent,
+       Subscribe[String, String](topicsSet, kafkaParams)
      )
+
+    
 
 
    /*
