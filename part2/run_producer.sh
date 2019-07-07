@@ -7,8 +7,7 @@ COLOR_DEF="\e[39m"
 
 echo -e "\n$COLOR_BLUE Executing : script-producer $COLOR_DEF\n"
 
-cd spark
-sbt run 
+cd kafka
+sbt run
 cd ..
-
 
