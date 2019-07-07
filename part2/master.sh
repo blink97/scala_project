@@ -30,7 +30,7 @@ sleep $TIMING_SMALL
 
 echo -e "\n$COLOR_BLUE Executing : kafka topics  $COLOR_DEF\n"
 
-./$KAFKA_DIR/bin/kafka-topics --zookeeper localhost:2181 --create --topic msg --replication-factor $N_REPLICATION_FACTOR --partitions $N_PARTITIONS & 
+./$KAFKA_DIR/bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic msg --replication-factor $N_REPLICATION_FACTOR --partitions $N_PARTITIONS & 
 
 sleep $TIMING_SMALL
 
