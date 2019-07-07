@@ -1,12 +1,20 @@
 import java.time.{LocalDate, Period}
-
+import org.apache.spark.storage.StorageLevel
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark._
 import org.apache.spark.streaming._
-import org.apache.spark.StreamingContext._
+import org.apache.spark.streaming.StreamingContext._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{DataTypes, StructType}
+import org.apache.spark.streaming.kafka010._
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
+import org.apache.spark.streaming.kafka010.ConsumerStrategies._
+import kafka.serializer.StringDecoder
+import kafka.serializer.DefaultDecoder
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.clients.consumer.ConsumerRecord
 
 object SparkConsumor {
   def main(args: Array[String]): Unit = {
@@ -20,17 +28,20 @@ class SparkConsumor(brokers: String) {
     val conf = new SparkConf()
       .setAppName("spark")
       .setMaster("local[*]")
-      .getOrCreate()
 
     val ssc = new StreamingContext(conf, Seconds(5))
 
 
     val topic = "msg"
+    val topics = Array("msg")
+    val topicSet = topic.toSet()
+
     val zkhost = "localhost"
     val zkports = "2181"
 
     val nbReceivers = 1
 
+    /*
     val kafkaProperties: Map[String, String] = 
       Map("zookeeper.hosts" -> zkhost,
           "zookeeper.port" -> zkports,
@@ -38,24 +49,45 @@ class SparkConsumor(brokers: String) {
           "zookeeper.consumer.connection" -> "localhost:2181",
           "kafka.consumer.id" -> "kafka-consumer")
 
-    val props = new java.utils.Properties()
+    val props = new java.util.Properties()
     kafkaProperties foreach {case (key, value) => props.put(key, value)}
+    */
+   val kafkaParams = 
+     Map[String, Object](
+  "bootstrap.servers" -> "localhost:9092,anotherhost:9092",
+  "key.deserializer" -> classOf[StringDeserializer],
+  "value.deserializer" -> classOf[StringDeserializer],
+  "group.id" -> "use_a_separate_group_id_for_each_stream",
+  "auto.offset.reset" -> "latest",
+  "enable.auto.commit" -> (false: java.lang.Boolean)
+  )
 
+
+
+   val directKafkaStream = KafkaUtils
+     .createDirectStream[String, String](
+       ssc, PreferConsistent, Subscribe[String, String](topics, kafkaParams)
+     )
+
+
+   /*
     val tmp_stream = ReceiverLauncher.launch(ssc, props,
       nbReceivers, StorageLevel.MEMORY_ONLY)
 
     val partitionOffset_stream = ProcessedOffsetManager.getPartitionOffset(tmp_stream, props)
+   */
 
     // Start App
-    tmp_stream.foreachRDD(rdd => {
+    directKafkaStream.foreachRDD(rdd => {
       println("\n\nNumber of records in this batch : " + rdd.count())
     })
+    directKafkaStream.map(record => println("\n\n " + record.key + " : " + record.value + "\n\n"))
     // End App
 
     // Create DStream
     // val lines = ssc.socketTextStream("localhost", 9092)
 
-    ProcessedOffsetManager.persists(partitionOffset_stream, props)
+    // ProcessedOffsetManager.persists(partitionOffset_stream, props)
     ssc.start()
     ssc.awaitTermination()
 
