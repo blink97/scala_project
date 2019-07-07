@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 LOG_ZOOKEEPER="no"
 PROJECT_JAR_PROD="kafka_2.12-0.1.jar"
 PROJECT_JAR_CONS="cons.jar"
@@ -16,14 +15,6 @@ N_REPLICATION_FACTOR=1
 ZOOKEEPER_CONFIG_FILE="$KAFKA_DIR/config/zookeeper.properties"
 KAFKA_CONFIG_FILE="$KAFKA_DIR/config/server.properties"
 
-# Automate Project run
-# Execute all projects script
-
-echo -e "\n$COLOR_BLUE Executing : sbt compile package PRODUCER $COLOR_DEF\n"
-cd kafka
-sbt compile package
-cp target/scala-2.12/$PROJECT_JAR_PROD ..
-cd -
 
 echo -e "\n$COLOR_BLUE Executing : zookeeper server start $COLOR_DEF\n"
 
@@ -39,7 +30,7 @@ sleep $TIMING_SMALL
 
 echo -e "\n$COLOR_BLUE Executing : kafka topics  $COLOR_DEF\n"
 
-./$KAFKA_DIR/kafka-topics --zookeeper localhost:2181 --create --topic msg --replication-factor $N_REPLICATION_FACTOR --partitions $N_PARTITIONS & 
+./$KAFKA_DIR/bin/kafka-topics --zookeeper localhost:2181 --create --topic msg --replication-factor $N_REPLICATION_FACTOR --partitions $N_PARTITIONS & 
 
 sleep $TIMING_SMALL
 
