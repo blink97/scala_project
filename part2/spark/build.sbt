@@ -6,6 +6,11 @@ scalaVersion := "2.12.8"
 
 val sparkVersion = "2.4.3"
 
+
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7"
+
+
+
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-library" % scalaVersion.value,
   "org.apache.spark" %% "spark-sql" % sparkVersion,
