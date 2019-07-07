@@ -57,23 +57,6 @@
 </div>
 <!-- Script de gestion du tableau -->
 <script>
-    function readTextFile(file, callback) {
-        var rawFile = new XMLHttpRequest();
-        rawFile.overrideMimeType("application/json");
-        rawFile.open("GET", file, true);
-        rawFile.onreadystatechange = function() {
-            if (rawFile.readyState === 4 && rawFile.status == "200") {
-                callback(rawFile.responseText);
-            }
-        }
-        rawFile.send(null);
-    }
-3
-    readTextFile("/home/gandil/Documents/scia/scala/scala_project/part2/stream/part-00000-6215232b-8e3b-488d-acb0-917e0377e68a-c000.json", function(text){
-        var data = JSON.parse(text);
-        console.log(data);
-    });
-
     function processRequest(e) {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var json = xhr.responseText
@@ -421,11 +404,11 @@
           }); */
         }
     }
-    /*var xhr = new XMLHttpRequest();
-    xhr.open( "GET", "../stream/part-00000-6215232b-8e3b-488d-acb0-917e0377e68a-c000.json", false);
+    var xhr = new XMLHttpRequest();
+    xhr.open( "GET", "http://localhost:8080/msg");
     xhr.send();
 
-    xhr.onreadystatechange = processRequest;*/
+    xhr.onreadystatechange = processRequest;
 </script>
 </body>
 </html>
