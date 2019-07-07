@@ -1,5 +1,8 @@
 import java.time.{LocalDate, Period}
 
+import org.apache.spark._
+import org.apache.spark.streaming._
+import org.apache.spark.StreamingContext._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
@@ -13,13 +16,54 @@ object SparkConsumor {
 
 class SparkConsumor(brokers: String) {
   def process(): Unit = {
-    // Init SparkSession
-    val spark = SparkSession.builder()
-      .appName("spark")
-      .master("local[*]")
+    // Init Saprk Conf
+    val conf = new SparkConf()
+      .setAppName("spark")
+      .setMaster("local[*]")
       .getOrCreate()
 
+    val ssc = new StreamingContext(conf, Seconds(5))
 
+
+    val topic = "msg"
+    val zkhost = "localhost"
+    val zkports = "2181"
+
+    val nbReceivers = 1
+
+    val kafkaProperties: Map[String, String] = 
+      Map("zookeeper.hosts" -> zkhost,
+          "zookeeper.port" -> zkports,
+          "kafka.topic" -> topic,
+          "zookeeper.consumer.connection" -> "localhost:2181",
+          "kafka.consumer.id" -> "kafka-consumer")
+
+    val props = new java.utils.Properties()
+    kafkaProperties foreach {case (key, value) => props.put(key, value)}
+
+    val tmp_stream = ReceiverLauncher.launch(ssc, props,
+      nbReceivers, StorageLevel.MEMORY_ONLY)
+
+    val partitionOffset_stream = ProcessedOffsetManager.getPartitionOffset(tmp_stream, props)
+
+    // Start App
+    tmp_stream.foreachRDD(rdd => {
+      println("\n\nNumber of records in this batch : " + rdd.count())
+    })
+    // End App
+
+    // Create DStream
+    // val lines = ssc.socketTextStream("localhost", 9092)
+
+    ProcessedOffsetManager.persists(partitionOffset_stream, props)
+    ssc.start()
+    ssc.awaitTermination()
+
+  }
+}
+
+
+/* OLD CODE 
     println("DDD")
 
     import spark.implicits._
@@ -37,12 +81,10 @@ class SparkConsumor(brokers: String) {
     inputDF.printSchema()
 
     // Output check
-    /*
     val consoleOutput = inputDF.writeStream
       .outputMode("append")
       .format("console")
       .start()
-    */
 
     // Select Data in Stream
     val dronesMsgDF = inputDF.selectExpr("CAST(value AS STRING)")
@@ -78,18 +120,18 @@ class SparkConsumor(brokers: String) {
       concat($"id", lit(" "), $"msg_id").as("key"),
       msgsFlatDF.col("timestamp").cast(DataTypes.StringType).as("timestamp"))
 
-    /*
+
     val kafkaOutput = resultDF.writeStream
       .format("kafka")
       .option("kafka.boostrap.servers", brokers)
       .option("topic", "res")
       .option("checkpointLocation", "./spark/checkpoints")
       .start()
-    */
+
     // Must be after all queries
     // kafkaOutput.awaitTermination()
     // consoleOutput.awaitTermination()
 
   }
 }
-
+*/
