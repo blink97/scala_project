@@ -43,12 +43,22 @@ echo -e "\n$COLOR_BLUE Executing : kafka topics  $COLOR_DEF\n"
 
 sleep $TIMING_SMALL
 
+exit 0
+
 echo -e "\n$COLOR_BLUE Executing : script-producer $COLOR_DEF\n"
 
-java -cp $PROJECT_JAR_PROD DroneMsgProducer localhost:9092 &
+cd kafka
+sbt run &
+cd ..
 
+sleep $TIMING_SMALL
 
-exit 0
+echo -e "\n$COLOR_BLUE Executing : script-producer $COLOR_DEF\n"
+
+cd spark
+sbt run &
+cd ..
+
 
 # Package jar
 echo -e "\n$COLOR_BLUE Executing : sbt compile package $COLOR_DEF\n"
