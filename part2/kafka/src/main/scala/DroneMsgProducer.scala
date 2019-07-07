@@ -1,5 +1,5 @@
 import java.util.{Date, Properties}
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import org.apache.kafka.clients.producer._ // {KafkaProducer, ProducerRecord}
 import scala.util.Random
 import DroneMsg._
 
@@ -24,12 +24,24 @@ class DroneMsgProducer(brokers: String) {
     // ! Create Producer
     val producer = new KafkaProducer[String, String](props)
 
-    val msg = "{\"id\":\"1\",\"msg_id\":\"10\",\"timestamp\":\"'2019-05-11 17:05:45.484944'\"}"
+    val msg1 = "{\"id\":\"1\",\"msg_id\":\"10\",\"timestamp\":\"'2019-05-11 17:05:45.484944'\"}"
+    val msg2 = "{\"id\":\"1\",\"msg_id\":\"11\",\"timestamp\":\"'2019-05-11 17:05:45.484944'\"}"
+    val msg3 = "{\"id\":\"1\",\"msg_id\":\"13\",\"timestamp\":\"'2019-05-11 17:05:45.484944'\"}"
 
-    val data = new ProducerRecord[String, String](topic, "1", msg)
+    val data = new ProducerRecord[String, String](topic, "1", msg1)
 
     // ! Send to Kafka
     val futureResult = producer.send(data)
+
+    println("Send to kafka")
+
+    // Wait ackn
+    futureResult.get()
+
+    val data2 = new ProducerRecord[String, String](topic, "1", msg2)
+
+    // ! Send to Kafka
+    val futureResult2 = producer.send(data)
 
     println("Send to kafka")
 
