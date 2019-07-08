@@ -17,6 +17,7 @@
 <div class="container">
     <h2>Données des drones</h2>
     <p></p>
+    <!--
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
             <a class="nav-link active" id="minute-tab" data-toggle="tab" href="#minute" role="tab" aria-controls="1minute" aria-selected="true">Nombre de drones (par minute)</a>
@@ -39,6 +40,7 @@
             <canvas class="my-4 chartjs-render-monitor" id="myChartSecond" width="659" height="278" style="display: block; width: 659px; height: 278px;"></canvas>
         </div>
     </div>
+  -->
 
 
     <table class="table table-striped table-bordered" id="dt">
@@ -60,9 +62,10 @@
     function processRequest(e) {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var json = xhr.responseText
-            console.log(json)
-            /* json = json.replace(/(?:\r\n|\r|\n)/g, ',')
+            json = json.replace(/(?:\r\n|\r|\n)/g, ',')
+            json = json.substring(0, json.length - 1);
             json = '{"tab":[' + json + ']}'
+            console.log(json)
             trueJson = JSON.parse(json)
             console.log(trueJson)
             list4Chart = new Array()
@@ -94,7 +97,7 @@
             var cptSecond = 0
 
             for (var i = 0; i < trueJson.tab.length; i++) {
-                var array = trueJson.tab[i];
+                var array = JSON.parse(trueJson.tab[i].msg);
                 var tr = document.createElement("tr");
                 var tdDroneId = document.createElement("td");
                 var tdMessage = document.createElement("td");
@@ -111,7 +114,7 @@
 
 
                 //Create data for chart
-                list4Chart[i] = {};
+                /*list4Chart[i] = {};
                 list4Chart[i]['labels'] = new Date(array.time.substring(0, 22));
                 if (!labelsMinute.includes(array.time.substring(0,16))) {
                     labelsMinute.push(array.time.substring(0,16));
@@ -156,7 +159,7 @@
                 list4Chart[i]['tempsOK'] = cptOK;
                 list4Chart[i]['tempsERROR'] = cptERROR;
                 list4Chart[i]['tempsHOT'] = cptHOT;
-                list4Chart[i]['tempsCOLD'] = cptCOLD;
+                list4Chart[i]['tempsCOLD'] = cptCOLD;*/
 
 
 
@@ -175,13 +178,13 @@
             });
 
 
-            labelsMinute = []
+            /*labelsMinute = []
             labelsSecond = []
             list4Chart.sort(function(x, y){
                 return x.labels - y.labels;
-            })
+            })*/
 
-            for (var j = 0; j < list4Chart.length; j++) {
+            /*for (var j = 0; j < list4Chart.length; j++) {
                 if (j < cptMinute) {
                     labelsMinute.push(list4Chart[j]['labelsMinute'])
                     nbDroneOK.push(list4Chart[j]['tempsMinuteOK'])
@@ -202,9 +205,9 @@
                 tempsERROR.push(list4Chart[j]['tempsERROR'])
                 tempsHOT.push(list4Chart[j]['tempsHOT'])
                 tempsCOLD.push(list4Chart[j]['tempsCOLD'])
-            }
+            }*/
 
-            var ctxCumul = document.getElementById("myChartCumul");
+            /*var ctxCumul = document.getElementById("myChartCumul");
             var myChartCumul = new Chart(ctxCumul, {
                 type: 'line',
                 data: {
@@ -401,7 +404,7 @@
                 display: true,
               }
             }
-          }); */
+          });*/
         }
     }
     var xhr = new XMLHttpRequest();
