@@ -1,5 +1,6 @@
 # PART 2
 
+
 **SCALA + SPARK + KAFKA**
 
 ## Install && Requirements
@@ -15,6 +16,7 @@
 
 
 ## Usage
+
 
 Each of these scripts launch required part for the project
 demonstration.
@@ -39,6 +41,10 @@ demonstration.
 ```
 
 Result of spark streaming stored in *stream/*
+
+```sh
+./run_web.sh
+```
 
 
 ## Components

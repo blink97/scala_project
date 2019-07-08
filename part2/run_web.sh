@@ -1,0 +1,2 @@
+cd web
+sbt run
