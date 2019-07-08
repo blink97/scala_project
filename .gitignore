@@ -16,3 +16,4 @@
 *.tgz
 *project/
 *logs*
+*stream/*

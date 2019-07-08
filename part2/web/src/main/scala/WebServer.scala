@@ -9,8 +9,20 @@ import Argonaut._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
+import reflect.io._, Path._
+import reflect.io._
+import Path._
+
+import scala.collection.JavaConverters._
+import scala.io.Source
+import java.io._
 
 object WebServer{
+
+  def getFilesMatchingRegex(dir: String, regex: util.matching.Regex) = {
+    new java.io.File(dir).listFiles
+        .filter(file => regex.findFirstIn(file.getName).isDefined)
+  }
 
   /**
     * WebServer function
@@ -44,7 +56,19 @@ object WebServer{
               concat(
                 get {
                   /* All msg as JSON */
-                  getFromFile("../stream/part-00000-6215232b-8e3b-488d-acb0-917e0377e68a-c000.json")
+                  val filesStream = getFilesMatchingRegex("../stream/", """.*\.json(?!\.crc)""".r)
+                  filesStream.foreach(f => println(f))
+                  val resFiles = filesStream.maxBy(_.lastModified)
+                  getFromFile(resFiles)
+                  // getFromFile("../stream/part-00000-6215232b-8e3b-488d-acb0-917e0377e68a-c000.json")
+                 /*
+                  val r = """.*\.json""".r
+                  val filesStream = "../stream/"
+                  filesStream walkFilter (p => p.isDirectory || when(p.name) {
+     | case r() => true }).toList()
+                  filesStream.map(f => getFromFile(f))
+                  */
+
                 }/*,
                 post {
                   entity(as[String]) { s =>
