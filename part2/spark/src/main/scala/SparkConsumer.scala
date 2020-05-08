@@ -34,7 +34,7 @@ class SparkConsumor(brokers: String) {
       .setAppName("spark")
       .setMaster("local[*]")
 
-    val ssc = new StreamingContext(conf, Seconds(30))
+    val ssc = new StreamingContext(conf, Seconds(5))
 
 
     val topic = "msg"
